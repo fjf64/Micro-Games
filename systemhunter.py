@@ -1,3 +1,4 @@
+#!!! NOT FINISHED !!!#
 import time as t
 import random as r
 """todo: finish forest, finish enemy attacks, add quest system, power shards, loot,"""
