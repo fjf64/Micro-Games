@@ -1,1 +1,630 @@
-
+import random as r
+import time as t
+name = input("please enter name: \n")
+free_points = 10
+if name == "fenrir":
+    free_points += 1000
+strength = 1
+print(name + "\'s goal is to find cheese for their philly cheese steak in the depths of the infinite dungeon...")
+sky_items = {
+    1:"steel sword",
+    2:"iron dagger",
+    3:"icefall rune",
+    4:"shortbow",
+    5:"longbow",
+    6:"vitality potion",
+    7:"camping gear",
+    8:"rations",
+    9:"safety pads",
+    10:"water purifier",
+    11:"steel shield",
+    12:"steel armor",
+    13:"leather under-armor",
+    14:"decorated helmet",
+    15:"arm braces",
+    16:"furniture",
+    17:"summoner's tome",
+    18:"charm of blaspheme",
+    19:"poisoned pouch",
+}
+summon_length = 5
+harpy_damage = 1
+curse_length = 3
+cheese = 1
+furniture = 0
+posion_length = 0
+posion_length_length = 0
+bought = list()
+health = 100
+defense = 1
+demon_complete = "not completed"
+exp = 0
+curse = 0
+summon = 0
+harpy = 0
+expcap = 100
+hub_loc = 0
+dung = 0
+devil_unlock = 0
+fight = 0
+levbon = 5
+cuhe = health
+skcr = 3
+skill_cooldown = 3
+dung_len = 1
+abilityunlock = 0
+money = 0
+skill2 = "locked"
+skill3 = "locked"
+skill4 = "locked"
+skill5 = "locked"
+enemy_list = {
+    1:"slime",
+    2:"gibby",
+    3:"Josh",
+    4:"George",
+    5:"ogre",
+    6:"cheese_rat",
+    7:"feces_elemental",
+    8:"omega_George",
+    9:"hellhound",
+    10:"goblin",
+    11:"hemogoblin",
+    12:"land_shark",
+    13:"psychopath",
+    14:"cultist",
+    15:"god_of_death",
+    16:"god_of_suffering",
+}
+ell = len(enemy_list)
+randen = r.randint(1,ell)
+infen = enemy_list[randen]
+low = 1
+unmult = 2
+high = 2
+cathcomp = "not completed"
+abnum = 2
+infa = r.uniform(low,high)
+infh = r.uniform(low,high) * 100
+infd = r.uniform(low,high)
+def start_up():
+    global name
+    global free_points
+    global strength
+    global health
+    global defense
+    global exp
+    global expcap
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n")
+    adds = int(input("add strength:"))
+    if adds <= free_points:
+        strength += adds
+        free_points -= adds
+        adds -= adds
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n")
+    addh = int(input("add health:"))
+    if addh <= free_points:
+        health += addh * 100
+        free_points -= addh
+        addh -= addh
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n")
+    addd = int(input("add defense:"))
+    if addd <= free_points:
+        defense += addd
+        free_points -= addd
+        addd -= addd
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n")
+def level_up():
+    global name
+    global free_points
+    global strength
+    global health
+    global defense
+    global exp
+    global expcap
+    global skill_cooldown
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n" "skill uses:"+str(skill_cooldown))
+    adds = int(input("add strength:"))
+    if adds <= free_points:
+        strength += adds
+        free_points -= adds
+        adds -= adds
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n" "skill uses:"+str(skill_cooldown))
+    addh = int(input("add health:"))
+    if addh <= free_points:
+        health += addh * 100
+        free_points -= addh
+        addh -= addh
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n" "skill uses:"+str(skill_cooldown))
+    addd = int(input("add defense:"))
+    if addd <= free_points:
+        defense += addd
+        free_points -= addd
+        addd -= addd
+    print(name + " has " + str(free_points) + " free points to allocate")
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n" "skill uses:"+str(skill_cooldown))
+    adds = int(input("add skill uses:"))
+    if adds <= free_points:
+        skill_cooldown += adds
+        free_points -= adds
+        adds -= adds
+    print("strength:" + str(strength) + "\n" + "health:" + str(health) + "\n" + "defense:" + str(defense) + "\n")
+def hub():
+    global low
+    global high
+    global devil_unlock
+    global hub_loc
+    global money
+    global harpy
+    global dung_len
+    global abilityunlock
+    if harpy == 1:
+        print("In the hub, you see a glowing tree, with a friendly harpy perched in it's leaves. The harpy will help you, and strike according to your gold vaults. ")
+    print("Welcome to the hub. here you can access different areas to help you in your journey. \n |1| = infinite dungeon, |2| = Caelum Civitatem, the holy city of flight")
+    if furniture == 1:
+        print("their is chairs and couches around, making this seem like more of a permanent home. ")
+    if abilityunlock >= 3:
+        print("|3| = Demon\'s battlements - " + demon_complete)
+        devil_unlock = 1
+    print("You have "+str(money)+" coins")
+    hub_loc = int(input())
+    if str(hub_loc) == "" or hub_loc == 0:
+        hub()
+    if hub_loc == 1:
+        inf_dung()
+    if hub_loc == 2:
+        sky_city()
+    if hub_loc == 3 and devil_unlock == 1:
+        devil_outpost()
+def inf_dung():
+    global dung
+    global cuhe
+    global skcr
+    global infa
+    global infh
+    global infd
+    global exp
+    global expcap
+    global infen
+    global free_points
+    global low
+    global summon_length
+    global curse_length
+    global posion_length
+    global posion_length_length
+    global summon
+    global skill4
+    global skill5
+    global high
+    global dung_len
+    global levbon
+    global skill1
+    global harpy_damage
+    global skill2
+    global skill3
+    global unmult
+    global abnum
+    global abilityunlock
+    global ell
+    global randen
+    global infen
+    global enemy_list
+    global money
+    global curse
+    global cheese
+    ell = len(enemy_list)
+    randen = r.randint(1,ell)
+    infen = enemy_list[randen]
+    infa = r.uniform(low,high)
+    infh = r.uniform(low,high) * 100
+    infd = r.uniform(low,high)
+    cuhe = health
+    skcr = skill_cooldown
+    dung = 1
+    curse = 0
+    print("floor "+str(dung_len))
+    while dung == 1:
+        cuhe -= ((infa*5) * harpy_damage) / infd
+        if harpy == 1:
+            infh -= money
+            print("The harpy dealt " + str(money) + " damage")
+        print("current health:"+str(round(cuhe))+"  skill uses:"+str(skcr)+"\n "+infen+"\'s health:"+str(round(infh)))
+        move1 = input("what do you choose to do?: \n|1| = attack  |2| = "+skill1+" |3| = "+skill2+" |4| = "+skill3 +" |5| = "+skill4 + "|6| = "+skill5)
+        if move1 == "1":
+            infh -= (strength*5) / infd
+            print(str(round((strength*5) / infd))+"damage done")
+            if posion_length_length >= 1:
+                posion_length += posion_length_length
+        if move1 == "2" and skcr > 0:
+            infh -= (strength*10) / infd
+            print(str(round((strength*10) / infd))+"damage done")
+            skcr -= 1
+        if move1 == "3" and skcr > 0 and not skill2 == "locked":
+            cuhe += (defense*15)
+            heal = (defense*15)
+            print(str(heal) + "healed")
+            skcr -= 1
+        if move1 == "4" and skcr > 1 and not skill3 == "locked":
+            infh -= (strength*25) / infd
+            print(str(round((int(strength)*25) / infd)) + " damage done")
+            skcr -= 2
+        if move1 == "5" and skcr > 1 and not skill4 == "locked":
+            print("the enemy has been inflicted by a curse for 4 rounds")
+            curse += curse_length
+            skcr -= 2
+        if move1 == "6" and skcr > 1 and not skill5 == "locked":
+            print("Your "+ skill5 + " has been summoned.")
+            summon += summon_length
+            skcr -= 2
+        if posion_length >= 1:
+            infh -= (strength*5) / infd
+            print("posion dealt "+str((strength*5) / infd)+" damage")
+            posion_length -= 1
+        if curse >= 1:
+            infh -= (strength * 7) / infd
+            curse -= 1
+            print("the inflicted curse has done:" + str((strength * 7) / infd) + "damage")
+        if summon >= 1:
+            infh -= ((health * defense) / 10) / infd
+            summon -= 1
+            print("Your summon has done " + str(((health * defense) / 10) / infd) + " damage")
+        if infh <= 0:
+            dung = 0
+            exp += r.uniform(low,high) * 10
+            money += round(r.uniform(low,high) * 10)
+            print(str(exp) + "/"+ str(expcap) +"exp")
+            print("You have "+str(money)+" coins")
+            print("The dungeon continues to evolves as you do.")
+            dung_len += 1
+            if dung_len >= 50 and cheese == 1:
+                print(".\n.\n.\nyou have found the can of cheese-wiz for your philly cheese steak. \n.\n.\n.")
+                t.sleep(1.5)
+                free_points += 50
+                cheese = 0
+            low += .5
+            high += .5
+            if exp >= expcap:
+                exp -= expcap
+                free_points += levbon
+                abilityunlock += 1
+                if abilityunlock == unmult:
+                    print(str(abnum)+" ability unlocked")
+                    if abnum == 3:
+                        print("this is a damaging two skill use ability. What is it's name?:")
+                        skill3 = input(str())
+                        print("you have found the plans of  demon fortress.")
+                        unmult = 1000
+                        abnum += 1
+                        levbon = 15
+                    if abnum == 2:
+                        print("this is a healing ability. What is it's name?:")
+                        skill2 = input(str())
+                        unmult = 3
+                        abnum += 1
+                        levbon = 10
+                level_up()
+        if cuhe <= 0:
+            print("You died. Your body has been reconstituted at the hub.")
+            low = 1
+            dung_len = 1
+            high = 2
+            hub()
+    else:
+        coninf = input("press |0| to go back to hub or |1| to continue:")
+        if int(coninf) == 1:
+            inf_dung()
+        else:
+            hub()
+def firstslime():
+    global skill1
+    global name
+    global health
+    global cuhe
+    global dung
+    global cuhe
+    global skcr
+    global infa
+    global infh
+    global infd
+    global exp
+    global expcap
+    global infen
+    global free_points
+    global low
+    global high
+    global dung_len
+    global levbon
+    global skill1
+    global skill2
+    global skill3
+    global unmult
+    global abnum
+    skill1 = input("your first skill is an attacking ability, what is it's name:")
+    print(skill1+" is your first skill. it does your strength*10. to use enter |s1|,to use attack enter |a|")
+    print(name + "\'s first challenge is to defeat the slime. \n")
+    slime1 = 1
+    s1s = r.randint(1,3)
+    s1h = r.randint(100,130)
+    s1d = r.uniform(1,2)
+    cuhe = health
+    skcr = 3
+    while slime1 == 1:
+        cuhe -= (s1s*5) / defense
+        print("current health:"+str(round(cuhe))+"  skill uses:"+str(skcr)+"\n slime health:"+str(round(s1h)))
+        move1 = input("what do you choose to do?: |1| = attack  |2| = "+skill1)
+        if move1 == "1":
+            s1h -= (strength*5) / s1d
+            print(str(round((strength*10) / s1d))+"damage done")
+        if move1 == "2":
+            s1h -= (strength*10) / s1d
+            print(str(round((strength*10) / s1d))+"damage done")
+            skcr -= 1
+        if int(s1h) <= 0:
+            slime1 = 0
+            exp += 20
+            print(str(exp) + "/"+ str(expcap) +"exp")
+        if cuhe <= 0:
+            print(name+" have died.")
+            exit()
+    print(name+" killed the slime")
+    if exp >= expcap:
+        exp -= expcap
+        free_points += 5
+        level_up()
+    hub()
+def sky_city():
+    global money
+    global cathcomp
+    global name
+    print("current money:" + str(money))
+    print("the sky city has |1| = shop |2| = The Cathedral - " + cathcomp)
+    sky_choice = input("where would you like to go?:")
+    if int(sky_choice) == 1 and money >= 100:
+        sky_shop()
+    if int(sky_choice) == 2:
+        under_sky()
+    if int(sky_choice) == 1 and money <= 100:
+        print("\nSorry "+name+". I can't give credit. Come back when you're a little... mmmmm... richer! \n")
+        hub()
+def sky_shop():
+    global sky_items
+    global bought
+    global select
+    global strength
+    global health
+    global defense
+    global money
+    global furniture
+    global curse_length
+    global posion_length
+    global summon_length
+    global posion_length_length
+    global harpy_damage
+    print("the storekeeper's items eah cost 100 gold, numbers 1-5 increase strength, numbers 6-10 increase health, and numbers 11-15 increase defense:")
+    print(sky_items)
+    select = input("which item would you like to buy?:")
+    if int(select) == 0:
+        hub()
+    bought = sky_items.pop(int(select))
+    if int(select) >= 1 and int(select) <= 5 and money >= 100:
+        strength += 10
+        money -= 100
+        print("your strength has increased by 10")
+    if int(select) >= 6 and int(select) <= 10 and money >= 100:
+        health += 10
+        money -= 100
+        print("your health has increased by 10")
+    if int(select) >= 11 and int(select) <= 15 and money >= 100:
+        defense += 10
+        money -= 100
+        print("your defense has increased by 10")
+    if int(select) == 16 and money >= 100:
+        furniture += 1
+        harpy_damage += 1
+        money -= 100
+        print("Your harpy is happy for the new comforts.")
+    if int(select) == 17 and money >= 100:
+        summon_length +=5
+        money -= 100
+        print("your summon will now accompany you for longer")
+    if int(select) == 18 and money >= 100:
+        curse_length += 2
+        money -= 100
+        print("Your curses now last longer. The charm is cake. ")
+    if int(select) == 19 and money >= 100:
+        posion_length_length += 3
+        money -= 100
+        print("You have gained posion to your basic attack.")
+    print("you have returned to the  hub")
+    hub()
+def under_sky():
+    global dung
+    global cuhe
+    global skcr
+    global infa
+    global infh
+    global infd
+    global exp
+    global expcap
+    global infen
+    global free_points
+    global low
+    global high
+    global dung_len
+    global levbon
+    global skill1
+    global skill2
+    global skill3
+    global unmult
+    global abnum
+    global abilityunlock
+    global ell
+    global randen
+    global infen
+    global enemy_list
+    global money
+    global harpy
+    global cathcomp
+    print("You have stumbled across a crawlspace under the great cathedral at the center of the city. As you enter it, you feel as if you are being watched.")
+    print("You exit the crawlspace, finding a cavern, hollowed out by artificial means. As you continue walking you discover a shrine of a winged harpy. do you pray to it?: y/n")
+    harp_choice = input()
+    if harp_choice == "n":
+        print("You have chosen to not pray. With nothing else in the room, you exit.")
+        hub()
+    if harp_choice == "y":
+        print("While kneeling down to pray, the floor suddenly opens dropping you into a large, dark, chamber. a series of torches light up, illuminating a harpy, in a human sized bird cage. Do you choose to let it out?: y/n")
+        harp_cage = input()
+        if harp_cage == "y":
+            print("The harpy is cautious, but seems to be unable to move or speak. ")
+            print("You pick up the harpy and carry it out, walking back to your hub.")
+            harpy = 1
+            cathcomp = "completed"
+            hub()
+        else:
+            print("you exit, leaving the harpy behind. ")
+            hub()
+def devil_outpost():
+    global fight
+    global demon_complete
+    global skill4
+    global skill5
+    fight = 0
+    print("After travelling for some time, you arrive at a heavily armored fortress called Devil\'s Outpost run by demons. \n Do you choose to enter?: y/n")
+    attack_choice = input()
+    if str(attack_choice) == "n":
+        print("you return to the hub leaving the fortress for a later date")
+        hub()
+    if str(attack_choice) == "y":
+        print("charging forth, you encounter demons and begin to battle")
+        demonfight()
+        if fight >= 1:
+            print("You have beaten the demons gaurding the gate and continue into the fortress")
+            print("You encounter a room gaurded by more armed guards, which notice you. As you enter battle, you feel a ominious energy in the room. ")
+            demonfight()
+            print("another demon approaches")
+            demonfight()
+            if fight>= 3:
+                print("As you enter the room, you see bookshelves. most books are unreadable, but you see three books in your language. one is a educational curse spell book, unlocking a new ability of cursing. What shall you name it?:")
+                skill4 = input(str())
+                print("Another book details a summoned companion that takes the form of what it's master wishes, and gets more powerfull on the vitality and resilience of it's owner. Unlocking a new ability of summoning, what shall you name your summon?:")
+                skill5 = input(str())
+                print("As you reach the final book, it shows a map of the fortress. the fortress was made to guard the very library you stand in, but otherwise doesn't have any valuables and soon proceed back to the hub.")
+                demon_complete = "complete"
+                hub()
+def demonfight():
+    global dung
+    global cuhe
+    global skcr
+    global infa
+    global infh
+    global infd
+    global exp
+    global expcap
+    global fight
+    global infen
+    global free_points
+    global low
+    global summon
+    global skill4
+    global skill5
+    global high
+    global dung_len
+    global levbon
+    global skill1
+    global skill2
+    global skill3
+    global unmult
+    global abnum
+    global abilityunlock
+    global ell
+    global randen
+    global infen
+    global enemy_list
+    global money
+    global curse
+    demon = "demon grunt"
+    low = 5
+    high = 7
+    infa = r.uniform(low,high)
+    infh = r.uniform(low,high) * 100
+    infd = r.uniform(low,high)
+    cuhe = health
+    skcr = skill_cooldown
+    dung = 1
+    curse = 0
+    while dung == 1:
+        cuhe -= (infa*5) / defense
+        if harpy == 1:
+            infh -= money
+            print("The harpy dealt " + str(money) + " damage")
+        print("current health:"+str(round(cuhe))+"  skill uses:"+str(skcr)+"\n "+demon+"\'s health:"+str(round(infh)))
+        move1 = input("what do you choose to do?: \n|1| = attack  |2| = "+skill1+" |3| = "+skill2+" |4| = "+skill3 +" |5| = "+skill4 + "|6| = "+skill5)
+        if move1 == "1":
+            infh -= (strength*5) / infd
+            print(str(round((strength*5) / infd))+"damage done")
+        if move1 == "2" and skcr > 0:
+            infh -= (strength*10) / infd
+            print(str(round((strength*10) / infd))+"damage done")
+            skcr -= 1
+        if move1 == "3" and skcr > 0 and not skill2 == "locked":
+            cuhe += (defense*15)
+            heal = (defense*15)
+            print(str(heal) + "healed")
+            skcr -= 1
+        if move1 == "4" and skcr > 1 and not skill3 == "locked":
+            infh -= (strength*25) / infd
+            print(str(round((int(strength)*25) / infd)) + " damage done")
+            skcr -= 2
+        if move1 == "5" and skcr > 1 and not skill4 == "locked":
+            print("the enemy has been inflicted by a curse for 4 rounds")
+            curse += 4
+            skcr -= 2
+        if move1 == "6" and skcr > 1 and not skill5 == "locked":
+            print("Your "+ skill5 + " has been summoned.")
+            summon += 5
+        if curse >= 1:
+            infh -= strength * 7
+            curse -= 1
+            print("the inflicted curse has done:" + str(strength * 7) + "damage")
+        if summon >= 1:
+            infh -= (health * defense) / 10
+            summon -= 1
+            print("Your summon has done " + str((health * defense) / 10) + " damage")
+        if infh <= 0:
+            dung = 0
+            exp += r.uniform(low,high) * 5
+            money += round(r.uniform(low,high) * 5)
+            print(str(exp) + "/"+ str(expcap) +"exp")
+            print("You have "+str(money)+" coins")
+            if exp >= expcap:
+                exp -= expcap
+                free_points += levbon
+                abilityunlock += 1
+                if abilityunlock == unmult:
+                    print(str(abnum)+" ability unlocked")
+                    if abnum == 3:
+                        print("this is a damaging two skill use ability. What is it's name?:")
+                        skill3 = input(str())
+                        unmult = 1000
+                        abnum += 1
+                        levbon = 15
+                    if abnum == 2:
+                        print("this is a healing ability. What is it's name?:")
+                        skill2 = input(str())
+                        unmult = 3
+                        abnum += 1
+                        levbon = 10
+                level_up()
+        if cuhe <= 0:
+            print("You died. Your body has been reconstituted at the hub.")
+            hub()
+    else:
+        fight += 1
+start_up()
+firstslime()
