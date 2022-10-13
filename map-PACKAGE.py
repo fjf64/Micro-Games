@@ -9,7 +9,9 @@ if True:
         4####
     """
     areamap = {}
-    oldpp = [4,5] # PLAYER POSITION
+    oldpp = [4,5] # INITIAL PLAYER POSITION
+    origin = oldpp
+    pathgen_parameters = 50
     newpp = oldpp
     walker_pos_list = []
     mapsize = [5, 10] #!!! IMPORTANT !!!#
@@ -99,11 +101,15 @@ if True:
     def pathgen(path_length):
         global walker_pos_list
         """creates randomized paths using [walkable] variable as the path icon"""
+        oldpp = origin
         random_walkers = [oldpp[0], oldpp[1]]
-        walker_pos_list = [[oldpp[0], oldpp[1]], ]
+        walker_pos_list = [[oldpp[0], oldpp[1]]]
         while path_length > 0:
-            random_walkers[0] += r.randint(-1, 1)
-            random_walkers[1] += r.randint(-1, 1)
+            walker_direction = r.randint(1,2)
+            if walker_direction == 1:
+                random_walkers[0] += r.randint(-1, 1)
+            if walker_direction == 2:
+                random_walkers[1] += r.randint(-1, 1)
             if random_walkers[0] <= mapsize[0] and random_walkers[1] <= mapsize[1] and random_walkers[0] >= 1 and random_walkers[1] >= 1:
                 walker_pos_list.append([random_walkers[0], random_walkers[1]])
                 path_length -= 1
@@ -113,8 +119,7 @@ if True:
         for x in range(len(walker_pos_list)):
             editmap(walker_pos_list[x][0], walker_pos_list[x][1], walkable)
 makemap(mapsize[0],mapsize[1], blank)
-pathgen(50)
-print(walker_pos_list)
+pathgen(pathgen_parameters)
 printmap()
 while True:
     ppmovemap()
