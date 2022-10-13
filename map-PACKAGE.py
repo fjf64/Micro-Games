@@ -9,13 +9,13 @@ if True:
         4####
     """
     areamap = {}
-    oldpp = [4,5] # INITIAL PLAYER POSITION
-    origin = oldpp
     pathgen_parameters = 50
-    newpp = oldpp
     walker_pos_list = []
     mapsize = [5, 10] #!!! IMPORTANT !!!#
     mapmid = [round(mapsize[0] / 2), round(mapsize[1] / 2)]
+    oldpp = [3, 5] # INITIAL PLAYER POSITION
+    origin = oldpp
+    newpp = oldpp
     player = "X"
     blank = "#"
     walkable = " "
@@ -107,9 +107,9 @@ if True:
         while path_length > 0:
             walker_direction = r.randint(1,2)
             if walker_direction == 1:
-                random_walkers[0] += r.randint(-1, 1)
+                random_walkers[0] += r.choice([-1, 1])
             if walker_direction == 2:
-                random_walkers[1] += r.randint(-1, 1)
+                random_walkers[1] += r.choice([-1, 1])
             if random_walkers[0] <= mapsize[0] and random_walkers[1] <= mapsize[1] and random_walkers[0] >= 1 and random_walkers[1] >= 1:
                 walker_pos_list.append([random_walkers[0], random_walkers[1]])
                 path_length -= 1
@@ -120,6 +120,7 @@ if True:
             editmap(walker_pos_list[x][0], walker_pos_list[x][1], walkable)
 makemap(mapsize[0],mapsize[1], blank)
 pathgen(pathgen_parameters)
+editmap(oldpp[0], oldpp[1], player, True)
 printmap()
 while True:
     ppmovemap()
