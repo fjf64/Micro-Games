@@ -1,17 +1,18 @@
 import random as r
 import math as m
 import copy as c
+import time
 presavecode = "" # <---- !!! Enter Save Code Here !!! #
 
 #Welcome to the labyrinth, Roamer! 
 
 #Cheatcode = 
-#st-mp;9999666:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*
+#st-mp;9999666:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1
 if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, living statue
     #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects, fire clipping in wall, test wings, check bo4 unlock
-    #Bug Report::projectile move tries on non-existent projectiles
+    #Bug Report::
     """ map coords
         #ABCD
         1####
@@ -21,9 +22,9 @@ if True:
     """
     areamap = {} # if a custom map was made, insert here
     walker_pos_list = []
-    mapsize = [5, 100]
+    mapsize = [5, 75]
     mapmid = [round(mapsize[0] / 2), round(mapsize[1] / 2)]
-    oldpp = [3, 50] # INITIAL PLAYER POSITION
+    oldpp = [3, 37] # INITIAL PLAYER POSITION
     wasd_converter = {
         "w": [-1,0],
         "a": [0,-1],
@@ -243,40 +244,43 @@ if True:
         global active_moving_projectiles
         global explosion_loc
         global active_fire
-        #active_moving_projectiles[index][3] == fire and 
-        if active_moving_projectiles[index][0] in tanks:
-            explosion_point = [active_moving_projectiles[index][0][0], active_moving_projectiles[index][0][1]]
-            for i in active_moving_projectiles:
-                if i[0] == explosion_point:
-                    explosion_removal = i
-            active_moving_projectiles.remove(i)
-            tanks.remove(explosion_point)
-            temp_point = [explosion_point]
-            for x in range(3):
-                explosion_loc = temp_point.copy()
-                for i in explosion_loc:
-                    temp_point.append([i[0] - 1, i[1]])
-                    temp_point.append([i[0] + 1, i[1]])
-                    temp_point.append([i[0], i[1] - 1])
-                    temp_point.append([i[0], i[1] + 1])
-            for x in explosion_loc:
-                if x[0] <= mapsize[0] and x[1] <= mapsize[1] and x[0] >= 1 and x[1] >= 1 and x in walker_pos_list:
-                    active_fire.append(x)
+        if active_moving_projectiles[index] != "Removed":
+            #active_moving_projectiles[index][3] == fire and 
+            if active_moving_projectiles[index][0] in tanks:
+                explosion_point = [active_moving_projectiles[index][0][0], active_moving_projectiles[index][0][1]]
+                for i in active_moving_projectiles:
+                    if i[0] == explosion_point:
+                        explosion_removal = i
+                active_moving_projectiles[active_moving_projectiles.index(i)] = "Removed"
+                tanks.remove(explosion_point)
+                temp_point = [explosion_point]
+                for x in range(3):
+                    explosion_loc = temp_point.copy()
+                    for i in explosion_loc:
+                        temp_point.append([i[0] - 1, i[1]])
+                        temp_point.append([i[0] + 1, i[1]])
+                        temp_point.append([i[0], i[1] - 1])
+                        temp_point.append([i[0], i[1] + 1])
+                for x in explosion_loc:
+                    if x[0] <= mapsize[0] and x[1] <= mapsize[1] and x[0] >= 1 and x[1] >= 1 and x in walker_pos_list:
+                        active_fire.append(x)
+            else:
+                direction = wasd_converter[active_moving_projectiles[index][2]]
+                temp_active_moving_projectiles = c.deepcopy(active_moving_projectiles)
+                for i in range(2):
+                    x = 1 - i
+                    temp_active_moving_projectiles[index][0][x] += direction[x]
+                    if 0 < temp_active_moving_projectiles[index][0][x] <= mapsize[x] and temp_active_moving_projectiles[index][0] in walker_pos_list and direction[x] != 0:
+                        active_moving_projectiles[index][0][x] += direction[x]
+                        #print(temp_active_moving_projectiles[index][0][x])
+                        #print(active_moving_projectiles[index][0][x])
+                    elif not temp_active_moving_projectiles[index][0] in walker_pos_list:
+                        #editmap(active_moving_projectiles[index][0][x],active_moving_projectiles[index][0][x],walkable)
+                        #active_moving_projectiles.remove(active_moving_projectiles[index])
+                        active_moving_projectiles[index] = "Removed"
+                        break
         else:
-            direction = wasd_converter[active_moving_projectiles[index][2]]
-            temp_active_moving_projectiles = c.deepcopy(active_moving_projectiles)
-            for i in range(2):
-                x = 1 - i
-                temp_active_moving_projectiles[index][0][x] += direction[x]
-                if 0 < temp_active_moving_projectiles[index][0][x] <= mapsize[x] and temp_active_moving_projectiles[index][0] in walker_pos_list and direction[x] != 0:
-                    active_moving_projectiles[index][0][x] += direction[x]
-                    #print(temp_active_moving_projectiles[index][0][x])
-                    #print(active_moving_projectiles[index][0][x])
-                elif not temp_active_moving_projectiles[index][0] in walker_pos_list:
-                    #editmap(active_moving_projectiles[index][0][x],active_moving_projectiles[index][0][x],walkable)
-                    #active_moving_projectiles.remove(active_moving_projectiles[index])
-                    active_moving_projectiles[index] = "Removed"
-                    break
+            print("passes")
     def pathgen(path_length,path_stretch = 1, path_bias_x = 0, path_bias_y = 0):
         global walker_pos_list
         global oldpp
@@ -329,6 +333,8 @@ if True:
                 thecode.append("se-"+str(x)+";"+str(settings[x][2])+";*")
             else:
                 thecode.append("se-"+str(x)+";"+str(settings[x][2]))
+        if thecode != "st-mp;0:in-Roamer's Revival;1:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*":
+            thecode.append("ti-"+str(time.time()))
         thecode = ":".join(thecode)
         print(thecode)
         
@@ -516,7 +522,7 @@ boons = { #"ex":[0"name", 1"description", 2on state, 3unlocked state, 4"1 : \n2 
     "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 10,000 mastery in a single run. "],
     #"2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper", False, 0, "1 : Freeze the predator 25 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 250 cycles in one run."],
     #"3" : ["Boon of Beests", "Achieve the terrifying speed of a Beest King", False, 0, "1 : Survive 50 cycles in one run.\n2 : Survive 250 cycles in one run.\n3 : Survive 500 cycles in one run."],
-    "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "Unlock Challenge : 1 : Light the predator on fire for 30 turns in one run.\n2 : Light the predator on fire for 45 turns in one run.\n3 : Light the predator on fire for 60 turns in one run."],
+    "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "1 : Light the predator on fire for 30 turns in one run.\n2 : Light the predator on fire for 45 turns in one run.\n3 : Light the predator on fire for 60 turns in one run."],
 }
 pred_variations = ["Reaper", "Beest", "Huntsman"]
 #pred_variations = ["Reaper"] # for testing
@@ -599,6 +605,7 @@ while True:
         player_on_fire = 0
         owariregen = 0
         flame_count = 0
+        tanks = []
         wings_length = int(boons["4"][3]) * 2
         wings_cooldown = 0
         oldmapp = oldpp
@@ -736,10 +743,8 @@ while True:
             time_survived += 1 
             for x in range(len(active_moving_projectiles)):
                 move_projectile(x)
-            print(active_moving_projectiles)
             fake_active_moving_projectiles = c.deepcopy(active_moving_projectiles)
             for x in range(len(active_moving_projectiles)):
-                print(x)
                 if active_moving_projectiles[x] == "Removed":
                     fake_active_moving_projectiles.remove(active_moving_projectiles[x])
             active_moving_projectiles = c.deepcopy(fake_active_moving_projectiles)
@@ -969,5 +974,14 @@ while True:
                         settings[settingtemp[1]][2] = str(tempx[1])
                     else:
                         settings[settingtemp[1]][2] = int(tempx[1])
-        except: #SWITCH TO EXCEPT WHEN DONE
+                if "ti-" in x:
+                    settingtemp = x.split("-")
+                    all_gone = round(time.time() - float(settingtemp[1]))
+                    hours_gone = m.floor(all_gone / 3600)
+                    minutes_gone = m.floor((all_gone % 3600)/ 60)
+                    seconds_gone = ((all_gone - hours_gone) - minutes_gone) % 60
+                    print(f"Welcome back Roamer! You have been gone {hours_gone} hours, {minutes_gone} minutes, and {seconds_gone} seconds.")
+                    time.sleep(1)
+        except Exception as exc: #SWITCH TO EXCEPT WHEN DONE
+            print(exc)
             print("Bad Savecode: Fix it or contact Dev")
