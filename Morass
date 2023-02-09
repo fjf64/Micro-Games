@@ -10,8 +10,8 @@ presavecode = "" # <---- !!! Enter Save Code Here !!! #
 #st-mp;9999666:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1
 if True:
     #Bug Fixing ::  //  //
-    #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, living statue / The Sheep, Jailer
-    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects,
+    #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
+    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects
     #Bug Report::
     """ map coords
         #ABCD
@@ -529,6 +529,7 @@ instincts_unbought = {
     "7":{"name":"Frozen Growth", "level":0, "max level":2, "price":25, "effect":"Increases Owari sniper ammo. ", "description":"The cold seeps into all. ", "prereq":6, "status":"7"},
     "8":{"name":"Cleansing Flames", "level":0, "max level":5, "price":5, "effect":"increases Flamer damage by 10%", "description":"The flames crave inpurity.", "prereq":5, "status":"8"},
     "9":{"name":"Komodo Jaws", "level":0, "max level":4, "price":15, "effect":"Traps stops the predator for longer", "description":"With jaws like a Komodo, they will never let go. ", "prereq":4, "status":"9"},
+    "10":{"name":"Gifts of Nothing", "level":0, "max level":3, "price":500, "effect":"Creates pick-ups to replenish ammo", "description":"To run out of supplies is to break universal laws. Balance must be established.", "prereq":1, "status":"10"},
     "14":{"name":"Cloudfire Ejection System", "level":0, "max level":1, "price":50, "effect":"Allows user to eject a bottle of fuel with [ft]", "description":"The fire wishes for more fuel, more food, and more flesh. ", "prereq":8, "status":"14"},
     "15":{"name":"Quick SetUp", "level":0, "max level":1, "price":75, "effect":"Allows movement after placing a trap in the same turn", "description":"Careful, too many have lost fingers with these bad boys. ", "prereq":9, "status":"15"},
     "16":{"name":"Purified", "level":0, "max level":1, "price":213, "effect":"Makes one Immune to the flame", "description":"Only the purifed could escape unscathed. ", "prereq":14, "status":"16"},
@@ -623,6 +624,7 @@ while True:
         huntsmanguncounter = 0
         huntsmanaimval = 5
         beestjumpinterval = .1
+        gon = []
         sheep_distance = []
         sheep_sprint = 0
         Sheep_flop = 0
@@ -727,6 +729,8 @@ while True:
             if pred_type == "Reaper": # [[0x,1y,2oldx,4time]]
                 for x in range(len(deathzones)):
                     editmap(deathzones[x][0][0],deathzones[x][0][1], "×")
+            for x in gon:
+                editmap(x[0],x[1], "ж")
             for i in range(len(active_moving_projectiles)):
                 editmap(active_moving_projectiles[i][1][0], active_moving_projectiles[i][1][1], walkable)
                 editmap(active_moving_projectiles[i][0][0], active_moving_projectiles[i][0][1], active_moving_projectiles[i][3])
@@ -742,7 +746,7 @@ while True:
                     inv["終わり Rounds"] = int(instincts_unbought["7"]["level"]) + 1 
                     owariregen = 0
                 else:
-                    owariregen += int(instincts_unbought["19"]["level"])
+                    owariregen += int(instincts_unbought["19"]["level"])/2
             if oldpp in active_fire and "16" not in instincts:
                 player_on_fire += 1
             if Predator_loc in active_fire:
@@ -774,6 +778,19 @@ while True:
             active_moving_projectiles = c.deepcopy(fake_active_moving_projectiles)
             if active_fire:
                 active_fire.remove(active_fire[0])
+                
+            if "10" in instincts: #GIFTS OF NOTHING
+                for x in range(int(instincts_unbought["10"]["level"]) - len(gon)):
+                    gon.append(r.choice(walker_pos_list))
+            if oldpp in gon:
+                print("Gift Obtained")
+                if "2" in instincts and int(inv["traps"]) + 1 <= int(instincts_unbought["5"]["level"]) + 1:
+                    inv["traps"] = int(inv["traps"]) + 1
+                if "3" in instincts and "14" in instincts and inv["Fire Bottles"] + 1 <= int(instincts_unbought["5"]["level"]) + 1:
+                    inv["Fire Bottles"] += 1
+                if "3" in instincts and inv["Flamer Gas"] + 3 <= 5*(int(instincts_unbought["5"]["level"]) + 1):
+                    inv["Flamer Gas"] += 3
+                gon.remove(oldpp)
             if pred_type == "Reaper":
                 deathzonecountercheck = False
                 for x in range(len(deathzones)):
@@ -845,6 +862,7 @@ while True:
         7:instincts_unbought["7"]["status"],
         8:instincts_unbought["8"]["status"],
         9:instincts_unbought["9"]["status"],
+        10:instincts_unbought["10"]["status"],
         14:instincts_unbought["14"]["status"],
         15:instincts_unbought["15"]["status"],
         16:instincts_unbought["16"]["status"],
@@ -853,9 +871,9 @@ while True:
         19:instincts_unbought["19"]["status"],
         }
         instinct_tree = {
-        1:"     "+str(ns[2])+" - "+str(ns[4])+" - "+str(ns[9])+" - "+str(ns[15])+"     "+xd+xd+"            ",
-        2:"    /                  /              ",
-        3:str(ns[0])+"- "+str(ns[1])+" - "+xd+xd+" - "+xd+xd+" - "+xd+xd+" - "+xd+xd+"  ",
+        1:"     "+str(ns[2])+" - "+str(ns[4])+" - "+str(ns[9])+" - "+str(ns[15])+"               ",
+        2:"    /                                ",
+        3:str(ns[0])+"- "+str(ns[1])+" - "+str(ns[10])+" - "+xd+xd+" - "+xd+xd+"  ",
         4:"   \                             ",
         5:"    "+str(ns[3])+" - "+str(ns[5])+" - "+str(ns[8])+" - "+str(ns[14])+" - "+str(ns[16])+"          ",
         6:"      \                           ",
@@ -863,9 +881,9 @@ while True:
         }
         
         """Real instinct_tree = {
-        1:"     2 - 4 - 9 - 15      13            ",
-        2:"    /                   /              ",
-        3:"0- 1 - 10 - 11 - 12 - 20  ",
+        1:"     2 - 4 - 9 - 15                ",
+        2:"    /                                 ",
+        3:"0- 1 - 10 - 11 - 12  ",
         4:"   \                             ",
         5:"    3 - 5 - 8 - 14 - 16          ",
         6:"      \                           ",
@@ -881,7 +899,7 @@ while True:
             print("You have: "+str(status["mastery points"]) + " Mastery Points")
             print(instincts_unbought[instinct_choice]["effect"])
             print(instincts_unbought[instinct_choice]["description"])
-            print("Requires instinct "+str(instincts_unbought[instinct_choice]["prereq"]))
+            print("Requires instinct "+str(instincts_unbought[instinct_choice]["prereq"])+" - "+str(instincts_unbought[str(instincts_unbought[instinct_choice]["prereq"])]["name"]))
             buychoice = input("Would you like to buy? y|n")
             if buychoice == "y" and int(status["mastery points"]) >= int(instincts_unbought[instinct_choice]["price"]) and int(instincts_unbought[instinct_choice]["level"]) < int(instincts_unbought[instinct_choice]["max level"]):
                 if str(instincts_unbought[instinct_choice]["prereq"]) in instincts or instincts_unbought[instinct_choice]["prereq"] == 0:
