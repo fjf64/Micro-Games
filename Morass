@@ -10,8 +10,8 @@ presavecode = "" # <---- !!! Enter Save Code Here !!! #
 #st-mp;9999666:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1
 if True:
     #Bug Fixing ::  //  //
-    #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, living statue
-    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects, fire clipping in wall, test wings, check bo4 unlock
+    #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, living statue / The Sheep, Jailer
+    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects,
     #Bug Report::
     """ map coords
         #ABCD
@@ -202,7 +202,7 @@ if True:
                     active_moving_projectiles.append([oldpp,oldpp,x, fire])
                     inv["Flamer Gas"] -= 1
                     print(str(inv["Flamer Gas"])+" Gas left")
-        #OWARI
+        #OWARIf
         if "6" in instincts:
             if direinput == settings["10"][2] and int(inv["終わり Rounds"]) > 0:
                 if Predator_loc[0] == oldpp[0] or Predator_loc[1] == oldpp[1]:
@@ -375,6 +375,9 @@ if True:
         global beestjumpswitch
         global beestjumpinterval
         global mastery_pool
+        global sheep_distance
+        global sheep_sprint
+        global Sheep_flop
         while ready_for_path_final == False and Predator_loc not in player_traps and pred_frozen <= 0:
             x += 1
             for items in currentpathchoices:
@@ -400,6 +403,7 @@ if True:
                 #print(str(len(pathchoices))+" options")
                 pathl = [oldpp[0],oldpp[1],pathchoices[-1][2]] # current point in line to oldpp
                 adjapath_length = pathchoices[-1][2]
+                sheep_distance.append(adjapath_length)
                 while adjapath_length != 0: # while there is still path length:
                     adjapath_length -= 1
                     lastl = "Origin" #last item
@@ -442,6 +446,22 @@ if True:
                                 print("The Beest Leaps, Unavoidable")
                                 notdeath()
                                 breakcheck = True
+                        elif pred_type == "Sheep" and len(sheep_distance) >= 2:
+                            if sheep_distance[-2] - 1 <= sheep_distance[-1] or Sheep_flop == 1:
+                                try:
+                                    Predator_loc = [pathfinal[-(sheep_sprint + 2)][0], pathfinal[-(sheep_sprint + 2)][1]]
+                                    sheep_sprint += 1
+                                except IndexError:
+                                    print("Ovid has found you. ")
+                                    notdeath()
+                                    breakcheck = True
+                                if Sheep_flop == 0:
+                                    Sheep_flop = 1
+                                else: 
+                                    Sheep_flop = 0
+                            else:
+                                Predator_loc = [pathfinal[-2][0], pathfinal[-2][1]]
+                                sheep_sprint = 0
                         else:
                             Predator_loc = [pathfinal[-2][0], pathfinal[-2][1]]
                     elif oldpp == Predator_loc:
@@ -486,14 +506,15 @@ tutorials = { #   "" : [""," \n"],
     "9" : ["The Flamer", "Forged on a lonely nomadic planet, this weapon of mass destruction only awakens in the hands of those who oppose gods and the like. The smith, Ferius, was a genius, only matched by his own curse of insanity. To remove the curse he had to kill the god responsible, so he sought the impossible; to kill the immortal. \n"],
     "10" : ["Roamer's Traps","The greatest tool is one forged for it's purpose. No matter the skill of the smith, weaver, or leatherworker, a weapon crafted for a different purpose isn't effective, no matter its history. \n"],
     "11" : ["Ferius, the Insane", "A talented genius beyond compare. Ferius was a mortal who ascended, gaining godlike smithing abilities. But many were opposed to a mortal with such power, and one such was a god named Medatio, God of Curses.\nTo stop Ferius from turning his abilities against the gods, Medatio cursed him to have his mind shattered into immeasurable peices, and Ferius sanity with thousands of his minds in his small human brain. \nHowever, Ferius was a genius, and with so many minds, he quickly surpassed the smithing ability of many gods. He took to a distant, frozen, roaming planet to forge a weapon to kill Medatio.\nEnamored with the heat of his forge, he hammered out  a trigger, then a barrel, and finally, thirteen Bottles of Sky. \nThe heat of his forge and the fire in his eyes flickered out, as he finally escapes his god-given insanity, leaving his last piece of being for his final masterpiece. \n"],
-    "12" : ["Reep","Born in nothing, Reep was a special child. At the flick of a wrist, any living matter would lose all energy, even in the Rove. His parents both passed away during his birth, along with anything living in a 10 meter vicinity. Those who feared Reep fueled him, driving him mad with the lonely truth he faced. He begun to thirst for death, as food no longer sustained him. To be quell his hunger, he hunted, learning of his weapon, the Sythe of Death. Morrow saw this cursed child, and gave him the only chance at hand, sending him to the Infinite Labyrinth. \n"],
+    "12" : ["Reep","Born in nothing, Reep was a special child. At the flick of a wrist, any living matter would lose all energy, even in the Rove. His parents both passed away during his birth, along with anything living in a small vicinity. Those who feared Reep fueled him, driving him mad with the lonely truth he faced. He begun to thirst for death, as food no longer sustained him. To be quell his hunger, he hunted, learning of his weapon, the Sythe of Death. Morrow saw this cursed child, and gave him the only chance at hand, sending him to the Infinite Labyrinth. \n"],
     "13" : ["The Beest King","All a beast knows is the hunt. On a lonely forest planet, a secret of live hides below the soil. Beings half human, half beast roam, the only food being their own brethren. The king of these monsters is deemed The Beest King, and can only claim the title through strength and violence. But what strength is prized is unknown to all but the King themselves. \n"],
     "14" : ["The Huntsman","\"We do not dirty our hands with the blood of our enemies. We take them down from a distance, with a single pull of a trigger. As it hides, we break its cover. As it runs, we focus our aim. As it  evolves, so do we. \" \n"],
     "15" : ["終わり", "A weapon truly made from nature, signifying the end of those in its sights. Grown from cold corpses, this weapon is a true marksman's charm. The 終わり [Owari] is a sniper rifle crafted from ice capable firing traceless bullets through the toughest of objects, and is so mighty even the best hunter in the world praised its strength. "],
     "16" : ["Cloudfire Ejection System","Bottles of boundless clouds to fuel the perpetual feeding of the fire. To harness godly power, one must hold its vessel and give it nourishment. \n"],
     "17" : ["Patience","The Daemon of Patience is the richest Daemon, with power and wealth beyond the stars, only shackled by time as the only mortal Daemon.\n"],
     "18" : ["Seraphim's Extinction","Apostles of gods, Seraphims had three pairs of wings, each with their own abilities. But without children, they were doomed to disappear. \n"],
-    "19" : ["The Immortal Ender","Are you blessed if you cannot die? Those who are trapped in an inescapable hell would always wish for a way out. \n"]
+    "19" : ["The Immortal Ender","Are you blessed if you cannot die? Those who are trapped in an inescapable hell would always wish for a way out. \n"],
+    "20" : ["Ovid the Sheep","Do not turn your back to the Sheep, else it will shed it's fur. Watch, and wait for a chance to abuse it's shyness. \n"],
     
 }
    #"ex":{"name":0, "level":0, "max level":0, "price":0, "effect":0, "description":0, "prereq":0, "status":"ex"},
@@ -504,7 +525,7 @@ instincts_unbought = {
     "3":{"name":"The Flamer", "level":0, "max level":1, "price":50, "effect":"Obtain a dangerous Flamethrower, stunning roamers, and injuring Predators - [f + {w,a,s,d}] use in direction. ex.) [fw] to fire up.", "description": "capable of burning the gods, the flamethrower shall purify all with its flames. ", "prereq":1, "status":"3"},
     "4":{"name":"Sharp Fangs", "level":0, "max level":5, "price":3, "effect":"Increases trap damage", "description":"One must sharpen their fangs to draw blood. ", "prereq":2, "status":"4"},
     "5":{"name":"Compressed Canisters", "level":0, "max level":11, "price":7, "effect":"Increases the Flamer ammo storage", "description":"The Origin of Fire is fuel. Let it burn. ", "prereq":3, "status":"5"},
-    "6":{"name":"終わり [Owari]", "level":0, "max level":1, "price":50, "effect":"unlocks the frozen sniper rifle [p] - use", "description":"To stop the unkillable, one must use time. ", "prereq":3, "status":"6"},
+    "6":{"name":"終わり [Owari]", "level":0, "max level":1, "price":50, "effect":"unlocks the frozen sniper rifle used to freeze enemies in the column and row of the Roamer. [p] - use", "description":"To stop the unkillable, one must use time. ", "prereq":3, "status":"6"},
     "7":{"name":"Frozen Growth", "level":0, "max level":2, "price":25, "effect":"Increases Owari sniper ammo. ", "description":"The cold seeps into all. ", "prereq":6, "status":"7"},
     "8":{"name":"Cleansing Flames", "level":0, "max level":5, "price":5, "effect":"increases Flamer damage by 10%", "description":"The flames crave inpurity.", "prereq":5, "status":"8"},
     "9":{"name":"Komodo Jaws", "level":0, "max level":4, "price":15, "effect":"Traps stops the predator for longer", "description":"With jaws like a Komodo, they will never let go. ", "prereq":4, "status":"9"},
@@ -519,13 +540,13 @@ instincts = {
     "0":["Roamer's Revival",1]
 }
 boons = { #"ex":[0"name", 1"description", 2on state, 3unlocked state, 4"1 : \n2 : \n3 : "],
-    "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 10,000 mastery in a single run. "],
-    #"2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper", False, 0, "1 : Freeze the predator 25 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 250 cycles in one run."],
+    "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience, your pile of riches growing the more you survive. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 10,000 mastery in a single run. "],
+    #"2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper in a frosty attack with [r]", False, 0, "1 : Freeze the predator 25 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 250 cycles in one run."],
     #"3" : ["Boon of Beests", "Achieve the terrifying speed of a Beest King", False, 0, "1 : Survive 50 cycles in one run.\n2 : Survive 250 cycles in one run.\n3 : Survive 500 cycles in one run."],
     "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "1 : Light the predator on fire for 30 turns in one run.\n2 : Light the predator on fire for 45 turns in one run.\n3 : Light the predator on fire for 60 turns in one run."],
 }
-pred_variations = ["Reaper", "Beest", "Huntsman"]
-#pred_variations = ["Reaper"] # for testing
+pred_variations = ["Reaper", "Beest", "Huntsman", "Sheep"]
+#pred_variations = ["Sheep"] # for testing
 status = {
     "mastery points":0,
 }
@@ -602,6 +623,9 @@ while True:
         huntsmanguncounter = 0
         huntsmanaimval = 5
         beestjumpinterval = .1
+        sheep_distance = []
+        sheep_sprint = 0
+        Sheep_flop = 0
         player_on_fire = 0
         owariregen = 0
         flame_count = 0
