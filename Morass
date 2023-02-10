@@ -7,12 +7,12 @@ presavecode = "" # <---- !!! Enter Save Code Here !!! #
 #Welcome to the labyrinth, Roamer! 
 
 #Cheatcode = 
-#st-mp;9999666:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1
+#st-mp;9998989:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:in-Gifts of Nothing;2:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1675972877.0739472
 if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
-    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects
-    #Bug Report::
+    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects, notifications
+    #Bug Report:: max upgrading skill causes error caught by oblivion
     """ map coords
         #ABCD
         1####
@@ -580,7 +580,10 @@ while True:
     print("Current Save Code:")
     savingcode()
     print("welcome to the Oblivion. [1] Enter the labyrinth || [2] The Library || [3] Roamer's Instincts || [4] Boons || [5] Status || [6] Settings || [7] Load Save")
-    oblivion_choice = input()
+    if presavecode == "":
+        oblivion_choice = input()
+    else:
+        oblivion_choice = "7"
     #oblivion_choice = "1"
     if oblivion_choice == "1":
         mastery_passive_gain = 0
@@ -917,8 +920,12 @@ while True:
                 print("Does not meet mastery requirements. ")
             if buychoice == "n":
                 print("Not puchasing, returning to oblivion. ")
-        except:
-            print("incorrect skill name entered, returning to Oblivion. ")
+        except Exception as exc:
+            if instinct_choice != "":
+                print(exc)
+                print("incorrect skill name entered, returning to Oblivion. ")
+            else:
+                print("returning to Oblivion. ")
     if oblivion_choice == "4": # Boons Section
         #["ex"]:[0"name", 1"description", 2on state, 3unlocked state, 4unlock requirement]
         for x in boons:
@@ -939,6 +946,7 @@ while True:
                     onstate = "On"
                 print(str(boons[boon_choice][0])+" : "+onstate)
                 print(boons[boon_choice][1])
+                print(boons[boon_choice][4])
                 print("level - "+str(boons[boon_choice][3]))
                 boon_on_choice = input("Turn on, [y/n]")
                 if boon_on_choice == "y":
@@ -1027,3 +1035,4 @@ while True:
         except Exception as exc: #SWITCH TO EXCEPT WHEN DONE
             print(exc)
             print("Bad Savecode: Fix it or contact Dev")
+        presavecode = ""
