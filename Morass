@@ -7,11 +7,11 @@ presavecode = "" # <---- !!! Enter Save Code Here !!! #
 #Welcome to the labyrinth, Roamer! 
 
 #Cheatcode = 
-#st-mp;9998989:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:in-Gifts of Nothing;2:bo-1;3:bo-4;3;*:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1675972877.0739472
+#st-mp;9998989:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:in-Gifts of Nothing;2:bo-1;3:bo-4;3:bo-3;3;*:bo-2;3:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1675972877.0739472
 if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
-    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects, notifications
+    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects
     #Bug Report:: max upgrading skill causes error caught by oblivion
     """ map coords
         #ABCD
@@ -111,6 +111,8 @@ if True:
         global oldmapp
         global wings_length
         global wings_cooldown
+        global dash_charge
+        global Stilleto_cooldown
         direinput = input()
         #MOVEMENT
         if direinput == settings["6"][2]:
@@ -119,6 +121,14 @@ if True:
             newpp = oldpp.copy()
             if boons["4"][2] == True and wings_cooldown == 0:
                 if newpp[0] > 1:
+                    newpp[0] -= 1
+                else:
+                    print("Out of Bounds")
+            elif boons["3"][2] == True and dash_charge >= 1:
+                if newpp[0] > 1 and [newpp[0] - 2, newpp[1]] in walker_pos_list:
+                    newpp[0] -= 2
+                    dash_charge -= 1
+                elif newpp[0] > 1 and [newpp[0] - 1, newpp[1]] in walker_pos_list:
                     newpp[0] -= 1
                 else:
                     print("Out of Bounds")
@@ -136,6 +146,14 @@ if True:
                     newpp[1] -= 1
                 else:
                     print("Out of Bounds")
+            elif boons["3"][2] == True and dash_charge >= 1:
+                if newpp[1] > 1 and [newpp[0], newpp[1] - 2] in walker_pos_list:
+                    newpp[1] -= 2
+                    dash_charge -= 1
+                elif newpp[1] > 1 and [newpp[0], newpp[1] - 1] in walker_pos_list:
+                    newpp[1] -= 1
+                else:
+                    print("Out of Bounds")
             elif newpp[1] > 1 and [newpp[0], newpp[1] - 1] in walker_pos_list:
                     newpp[1] -= 1
             else:
@@ -150,6 +168,14 @@ if True:
                     newpp[0] += 1
                 else:
                     print("Out of Bounds")
+            elif boons["3"][2] == True and dash_charge >= 1:
+                if newpp[0] < mapsize[0] and [newpp[0] + 2, newpp[1]] in walker_pos_list:
+                    newpp[0] += 2
+                    dash_charge -= 1
+                elif newpp[0] < mapsize[0] and [newpp[0] + 1, newpp[1]] in walker_pos_list:
+                    newpp[0] += 1
+                else:
+                    print("Out of Bounds")
             elif newpp[0] < mapsize[0] and [newpp[0] + 1, newpp[1]] in walker_pos_list:
                     newpp[0] += 1
             else:
@@ -161,6 +187,14 @@ if True:
             oldmapp = oldpp.copy()
             if boons["4"][2] == True and wings_cooldown == 0:
                 if newpp[1] < mapsize[1]:
+                    newpp[1] += 1
+                else:
+                    print("Out of Bounds")
+            elif boons["3"][2] == True and dash_charge >= 1:
+                if newpp[1] < mapsize[1] and [newpp[0], newpp[1] + 2] in walker_pos_list:
+                    newpp[1] += 2
+                    dash_charge -= 1
+                elif newpp[1] < mapsize[1] and [newpp[0], newpp[1] + 1] in walker_pos_list:
                     newpp[1] += 1
                 else:
                     print("Out of Bounds")
@@ -202,7 +236,7 @@ if True:
                     active_moving_projectiles.append([oldpp,oldpp,x, fire])
                     inv["Flamer Gas"] -= 1
                     print(str(inv["Flamer Gas"])+" Gas left")
-        #OWARIf
+        #OWARI
         if "6" in instincts:
             if direinput == settings["10"][2] and int(inv["終わり Rounds"]) > 0:
                 if Predator_loc[0] == oldpp[0] or Predator_loc[1] == oldpp[1]:
@@ -235,11 +269,20 @@ if True:
             hotkeynum = 4
             while hotkeynum <= 11:
                 if hotkeynum == 8:
-                    print(settings["8"][2]+ "[" +str(settings["4"][2])+","+str(settings["5"][2])+","+str(settings["6"][2])+","+str(settings["7"][2])+"]")
+                    print("Flamer gotkey - "+settings["8"][2]+ "[" +str(settings["4"][2])+","+str(settings["5"][2])+","+str(settings["6"][2])+","+str(settings["7"][2])+"]")
                 else:
                     print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
                 hotkeynum += 1
+            print("Bag hotkey - i")
+            print(f"Forced quit - quit")
+            ppmovemap()
             
+        #Stilleto
+        if direinput == settings["12"][2] and boons["2"][2] == True and Stilleto_cooldown <= 0:
+            pred_frozen += int(boons["2"][2])*2
+            Stilleto_cooldown = 10 - (int(boons["2"][3])/2)
+        elif direinput == settings["12"][2] and boons["2"][2] == True and Stilleto_cooldown > 0:
+            Stilleto_cooldown -= 1
     def move_projectile(index):
         global active_moving_projectiles
         global explosion_loc
@@ -279,8 +322,6 @@ if True:
                         #active_moving_projectiles.remove(active_moving_projectiles[index])
                         active_moving_projectiles[index] = "Removed"
                         break
-        else:
-            print("passes")
     def pathgen(path_length,path_stretch = 1, path_bias_x = 0, path_bias_y = 0):
         global walker_pos_list
         global oldpp
@@ -343,21 +384,50 @@ if True:
         global status
         global boons
         global time_survived
+        global boon_notification
         print(str(time_survived)+" Cycles survived")
         print(str(round(mastery_pool))+" Mastery gained")
         status["mastery points"] += round(mastery_pool)
+        #WEALTH
         if mastery_pool >= 10000 and boons["1"][3] < 3:
             boons["1"][3] = 3
+            boon_notification = "!"
         elif mastery_pool >= 1000 and boons["1"][3] < 2:
             boons["1"][3] = 2
+            boon_notification = "!"
         elif mastery_pool >= 100 and boons["1"][3] < 1:
             boons["1"][3] = 1
-        if flame_count >= 60 and boons["4"][3] < 3:
+            boon_notification = "!"
+        #WINGS
+        if flame_count >= 80 and boons["4"][3] < 3:
             boons["4"][3] = 3
-        elif flame_count >= 45 and boons["4"][3] < 2:
+            boon_notification = "!"
+        elif flame_count >= 40 and boons["4"][3] < 2:
             boons["4"][3] = 2
-        elif flame_count >= 30 and boons["4"][3] < 1:
+            boon_notification = "!"
+        elif flame_count >= 20 and boons["4"][3] < 1:
             boons["4"][3] = 1
+            boon_notification = "!"
+        #GALE
+        if time_survived >= 113 and boons["3"][3] < 3:
+            boons["3"][3] = 3
+            boon_notification = "!"
+        elif time_survived >= 60 and boons["3"][3] < 2:
+            boons["3"][3] = 2
+            boon_notification = "!"
+        elif time_survived >= 30 and boons["3"][3] < 1:
+            boons["3"][3] = 1
+            boon_notification = "!"
+        #REAPER
+        if Frozen_time >= 213 and boons["2"][3] < 3:
+            boons["2"][3] = 3
+            boon_notification = "!"
+        elif Frozen_time >= 100 and boons["2"][3] < 2:
+            boons["2"][3] = 2
+            boon_notification = "!"
+        elif Frozen_time >= 50 and boons["2"][3] < 1:
+            boons["2"][3] = 1
+            boon_notification = "!"
         mastery_pool = 0
     def pred_walk():
         global breakcheck
@@ -373,6 +443,7 @@ if True:
         global temppathchoices
         global oldpredloc
         global beestjumpswitch
+        global Frozen_time
         global beestjumpinterval
         global mastery_pool
         global sheep_distance
@@ -477,6 +548,7 @@ if True:
                     pred_frozen += int(instincts_unbought["9"]["level"]) + 1
             elif pred_frozen >= 1:
                 pred_frozen -= 1
+                Frozen_time += 1
         try:
             editmap(oldpredloc[0], oldpredloc[1], walkable)
         except Exception as exc:
@@ -542,10 +614,11 @@ instincts = {
 }
 boons = { #"ex":[0"name", 1"description", 2on state, 3unlocked state, 4"1 : \n2 : \n3 : "],
     "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience, your pile of riches growing the more you survive. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 10,000 mastery in a single run. "],
-    #"2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper in a frosty attack with [r]", False, 0, "1 : Freeze the predator 25 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 250 cycles in one run."],
-    #"3" : ["Boon of Beests", "Achieve the terrifying speed of a Beest King", False, 0, "1 : Survive 50 cycles in one run.\n2 : Survive 250 cycles in one run.\n3 : Survive 500 cycles in one run."],
-    "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "1 : Light the predator on fire for 30 turns in one run.\n2 : Light the predator on fire for 45 turns in one run.\n3 : Light the predator on fire for 60 turns in one run."],
+    "2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper with the deathly stilleto, freezing the predator with [r]", False, 0, "1 : Freeze the predator 50 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 213 cycles in one run."],
+    "3" : ["Boon of Beests", "Achieve the terrifying speed of a Beest King", False, 0, "1 : Survive 30 cycles in one run.\n2 : Survive 60 cycles in one run.\n3 : Survive 113 cycles in one run."],
+    "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "1 : Light the predator on fire for 20 turns in one run.\n2 : Light the predator on fire for 40 turns in one run.\n3 : Light the predator on fire for 80 turns in one run."],
 }
+boon_notification = ""
 pred_variations = ["Reaper", "Beest", "Huntsman", "Sheep"]
 #pred_variations = ["Sheep"] # for testing
 status = {
@@ -563,6 +636,7 @@ settings = { # "num":["name","desc",value]
     "9":["Cloudfire hotkey","Enter hotkey for dropping a fire bottle.","ft","*"],
     "10":["Owari hotkey","Enter hotkey for using the Owari.","o","*"],
     "11":["Trap hotkey","Enter hotkey for placing a trap.","t","*"],
+    "12":["Stilleto hotkey","Enter hotkey for placing using the Reaper's Stilleto.","r","*"],
 }
 player_traps = []
 tanks = [] #[[0x,0y,]]
@@ -579,7 +653,7 @@ breakcheck = False
 while True:
     print("Current Save Code:")
     savingcode()
-    print("welcome to the Oblivion. [1] Enter the labyrinth || [2] The Library || [3] Roamer's Instincts || [4] Boons || [5] Status || [6] Settings || [7] Load Save")
+    print(f"welcome to the Oblivion. [1] Enter the labyrinth || [2] The Library || [3] Roamer's Instincts || {boon_notification} [4] Boons {boon_notification} || [5] Status || [6] Settings || [7] Load Save")
     if presavecode == "":
         oblivion_choice = input()
     else:
@@ -626,6 +700,8 @@ while True:
         personaldeathzone = 0
         huntsmanguncounter = 0
         huntsmanaimval = 5
+        dash_charge = 0
+        Stilleto_cooldown = 10 - (int(boons["2"][3])/2)
         beestjumpinterval = .1
         gon = []
         sheep_distance = []
@@ -634,6 +710,7 @@ while True:
         player_on_fire = 0
         owariregen = 0
         flame_count = 0
+        Frozen_time = 0
         tanks = []
         wings_length = int(boons["4"][3]) * 2
         wings_cooldown = 0
@@ -754,16 +831,21 @@ while True:
                 player_on_fire += 1
             if Predator_loc in active_fire:
                 if "8" in instincts:
-                    mastery_pool += (3 + (.3*int(instincts_unbought["8"]["level"]))) * (1+(.1*int(instincts_unbought["1"]["level"])))
+                    mastery_pool += (5 + (.5*int(instincts_unbought["8"]["level"]))) * (1+(.1*int(instincts_unbought["1"]["level"])))
                 else:
-                    mastery_pool + 3 *  (1+(.1*int(instincts_unbought["1"]["level"])))
-                flame_count += 1
+                    mastery_pool + 5 *  (1+(.1*int(instincts_unbought["1"]["level"])))
+                flame_count += 1.5
+            if boons["3"][2] == True:
+                dash_charge += boons["3"][3]/10
+                if dash_charge > boons["3"][3]*3:
+                    dash_charge = boons["3"][3]*3
+                print(f"{m.floor(dash_charge)} Dashes")
             for x in active_moving_projectiles:
                 if Predator_loc[0] in x and Predator_loc[1] in x and fire in x:
                     if "8" in instincts:
-                        mastery_pool += (3 + (.3*int(instincts_unbought["8"]["level"]))) * (1+(.1*int(instincts_unbought["1"]["level"])))
+                        mastery_pool += (5 + (.5*int(instincts_unbought["8"]["level"]))) * (1+(.1*int(instincts_unbought["1"]["level"])))
                     else:
-                        mastery_pool + 3 *  (1+(.1*int(instincts_unbought["1"]["level"])))
+                        mastery_pool + 5 * (1+(.1*int(instincts_unbought["1"]["level"])))
                     flame_count += 1
             mastery_pool += round(mastery_passive_gain)
             if not time_survived == 0:
@@ -928,6 +1010,7 @@ while True:
                 print("returning to Oblivion. ")
     if oblivion_choice == "4": # Boons Section
         #["ex"]:[0"name", 1"description", 2on state, 3unlocked state, 4unlock requirement]
+        boon_notification = ""
         for x in boons:
             xnum = x
             x = boons[x]
@@ -984,6 +1067,7 @@ while True:
                 except ValueError:
                     print("Bad Input")
     if oblivion_choice == "7":
+        boon_donut_cheat = 0
         try:
             if presavecode == "":
                 theload = input("Enter Code:")
@@ -1015,8 +1099,9 @@ while True:
                     tempxx = str(tempxx)
                     boons[tempxx][3] = int(tempx[1])
                     if len(tempx) == 3:
-                        if tempx[2] == "*":
+                        if tempx[2] == "*" and boon_donut_cheat == 0:
                             boons[tempxx][2] = True
+                            boon_donut_cheat = 1
                 if "se-" in x:
                     tempx = x.split(";")
                     settingtemp = tempx[0].split("-")
