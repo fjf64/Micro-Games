@@ -113,6 +113,8 @@ if True:
         global wings_cooldown
         global dash_charge
         global Stilleto_cooldown
+        if boons["2"][2] == True and Stilleto_cooldown > 0:
+            print(f"{Stilleto_cooldown} cycles cooldown")
         direinput = input()
         #MOVEMENT
         if direinput == settings["6"][2]:
@@ -267,7 +269,7 @@ if True:
         #?
         if direinput == "?" or direinput == "help":
             hotkeynum = 4
-            while hotkeynum <= 11:
+            while hotkeynum <= 12:
                 if hotkeynum == 8:
                     print("Flamer gotkey - "+settings["8"][2]+ "[" +str(settings["4"][2])+","+str(settings["5"][2])+","+str(settings["6"][2])+","+str(settings["7"][2])+"]")
                 else:
@@ -281,7 +283,7 @@ if True:
         if direinput == settings["12"][2] and boons["2"][2] == True and Stilleto_cooldown <= 0:
             pred_frozen += int(boons["2"][2])*2
             Stilleto_cooldown = 10 - (int(boons["2"][3])/2)
-        elif direinput == settings["12"][2] and boons["2"][2] == True and Stilleto_cooldown > 0:
+        elif boons["2"][2] == True and Stilleto_cooldown > 0:
             Stilleto_cooldown -= 1
     def move_projectile(index):
         global active_moving_projectiles
