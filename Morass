@@ -12,7 +12,7 @@ if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
     #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects
-    #Bug Report:: max upgrading skill causes error caught by oblivion
+    #Bug Report:: max upgrading skill causes error caught by oblivion, sheep teleport
     """ map coords
         #ABCD
         1####
@@ -114,7 +114,11 @@ if True:
         global dash_charge
         global Stilleto_cooldown
         if boons["2"][2] == True and Stilleto_cooldown > 0:
-            print(f"{Stilleto_cooldown} cycles cooldown")
+            print(f"{m.ceil(Stilleto_cooldown)} cycles cooldown")
+        if wings_cooldown > 0 and boons["4"][2] == True:
+            print(f"{wings_cooldown} Cycles cooldown")
+        if wings_length > 0 and boons["4"][2] == True and oldpp not in walker_pos_list:
+            print(f"{wings_length} Cycles left")
         direinput = input()
         #MOVEMENT
         if direinput == settings["6"][2]:
@@ -281,7 +285,7 @@ if True:
             
         #Stilleto
         if direinput == settings["12"][2] and boons["2"][2] == True and Stilleto_cooldown <= 0:
-            pred_frozen += int(boons["2"][2])*2
+            pred_frozen += round(int(boons["2"][3])*2.5)
             Stilleto_cooldown = 10 - (int(boons["2"][3])/2)
         elif boons["2"][2] == True and Stilleto_cooldown > 0:
             Stilleto_cooldown -= 1
@@ -391,7 +395,7 @@ if True:
         print(str(round(mastery_pool))+" Mastery gained")
         status["mastery points"] += round(mastery_pool)
         #WEALTH
-        if mastery_pool >= 10000 and boons["1"][3] < 3:
+        if mastery_pool >= 5000 and boons["1"][3] < 3:
             boons["1"][3] = 3
             boon_notification = "!"
         elif mastery_pool >= 1000 and boons["1"][3] < 2:
@@ -421,13 +425,13 @@ if True:
             boons["3"][3] = 1
             boon_notification = "!"
         #REAPER
-        if Frozen_time >= 213 and boons["2"][3] < 3:
+        if Frozen_time >= 60 and boons["2"][3] < 3:
             boons["2"][3] = 3
             boon_notification = "!"
-        elif Frozen_time >= 100 and boons["2"][3] < 2:
+        elif Frozen_time >= 30 and boons["2"][3] < 2:
             boons["2"][3] = 2
             boon_notification = "!"
-        elif Frozen_time >= 50 and boons["2"][3] < 1:
+        elif Frozen_time >= 15 and boons["2"][3] < 1:
             boons["2"][3] = 1
             boon_notification = "!"
         mastery_pool = 0
@@ -522,16 +526,16 @@ if True:
                         elif pred_type == "Sheep" and len(sheep_distance) >= 2:
                             if sheep_distance[-2] - 1 <= sheep_distance[-1] or Sheep_flop == 1:
                                 try:
-                                    Predator_loc = [pathfinal[-(sheep_sprint + 2)][0], pathfinal[-(sheep_sprint + 2)][1]]
-                                    sheep_sprint += 1
+                                    Predator_loc = [pathfinal[-(sheep_sprint + 1)][0], pathfinal[-(sheep_sprint + 1)][1]]
+                                    sheep_sprint += 2
+                                    if sheep_distance[-2] - 1 <= sheep_distance[-1] and Sheep_flop == 0:
+                                        Sheep_flop = 1
+                                    else:
+                                        Sheep_flop = 0
                                 except IndexError:
                                     print("Ovid has found you. ")
                                     notdeath()
                                     breakcheck = True
-                                if Sheep_flop == 0:
-                                    Sheep_flop = 1
-                                else: 
-                                    Sheep_flop = 0
                             else:
                                 Predator_loc = [pathfinal[-2][0], pathfinal[-2][1]]
                                 sheep_sprint = 0
@@ -604,6 +608,7 @@ instincts_unbought = {
     "8":{"name":"Cleansing Flames", "level":0, "max level":5, "price":5, "effect":"increases Flamer damage by 10%", "description":"The flames crave inpurity.", "prereq":5, "status":"8"},
     "9":{"name":"Komodo Jaws", "level":0, "max level":4, "price":15, "effect":"Traps stops the predator for longer", "description":"With jaws like a Komodo, they will never let go. ", "prereq":4, "status":"9"},
     "10":{"name":"Gifts of Nothing", "level":0, "max level":3, "price":500, "effect":"Creates pick-ups to replenish ammo", "description":"To run out of supplies is to break universal laws. Balance must be established.", "prereq":1, "status":"10"},
+    "13":{"name":"13 13 13", "level":0, "max level":13, "price":50000, "effect":"Become Insane.", "description":"13 13 13 13 13 13 13 13 13 13 13 13 13", "prereq":0, "status":"13"},
     "14":{"name":"Cloudfire Ejection System", "level":0, "max level":1, "price":50, "effect":"Allows user to eject a bottle of fuel with [ft]", "description":"The fire wishes for more fuel, more food, and more flesh. ", "prereq":8, "status":"14"},
     "15":{"name":"Quick SetUp", "level":0, "max level":1, "price":75, "effect":"Allows movement after placing a trap in the same turn", "description":"Careful, too many have lost fingers with these bad boys. ", "prereq":9, "status":"15"},
     "16":{"name":"Purified", "level":0, "max level":1, "price":213, "effect":"Makes one Immune to the flame", "description":"Only the purifed could escape unscathed. ", "prereq":14, "status":"16"},
@@ -615,8 +620,8 @@ instincts = {
     "0":["Roamer's Revival",1]
 }
 boons = { #"ex":[0"name", 1"description", 2on state, 3unlocked state, 4"1 : \n2 : \n3 : "],
-    "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience, your pile of riches growing the more you survive. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 10,000 mastery in a single run. "],
-    "2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper with the deathly stilleto, freezing the predator with [r]", False, 0, "1 : Freeze the predator 50 cycles in one run.\n2 : Freeze the predator 100 cycles in one run.\n3 : Freeze the predator 213 cycles in one run."],
+    "1" : ["Boon of Fortune","Brings immeasureable wealth from the Deamon of Patience, your pile of riches growing the more you survive. ", False, 0, "1 : gather 100 mastery in a single run. \n2 : gather 1,000 mastery in a single run. \n3 : gather 5,000 mastery in a single run. "],
+    "2" : ["Boon of Harvests", "Allows you to harness the chilling powers of a Reaper with the deathly stiletto, freezing the predator with [r]", False, 0, "1 : Freeze the predator 15 cycles in one run.\n2 : Freeze the predator 30 cycles in one run.\n3 : Freeze the predator 60 cycles in one run."],
     "3" : ["Boon of Beests", "Achieve the terrifying speed of a Beest King", False, 0, "1 : Survive 30 cycles in one run.\n2 : Survive 60 cycles in one run.\n3 : Survive 113 cycles in one run."],
     "4" : ["Boon of the Seraphim", "A Blessing of Flight from a Seraphim's second pair of wings. ", False, 0, "1 : Light the predator on fire for 20 turns in one run.\n2 : Light the predator on fire for 40 turns in one run.\n3 : Light the predator on fire for 80 turns in one run."],
 }
@@ -638,7 +643,7 @@ settings = { # "num":["name","desc",value]
     "9":["Cloudfire hotkey","Enter hotkey for dropping a fire bottle.","ft","*"],
     "10":["Owari hotkey","Enter hotkey for using the Owari.","o","*"],
     "11":["Trap hotkey","Enter hotkey for placing a trap.","t","*"],
-    "12":["Stilleto hotkey","Enter hotkey for placing using the Reaper's Stilleto.","r","*"],
+    "12":["Stiletto hotkey","Enter hotkey for placing using the Reaper's Stiletto.","r","*"],
 }
 player_traps = []
 tanks = [] #[[0x,0y,]]
@@ -927,7 +932,10 @@ while True:
                     for i in active_moving_projectiles:
                         if x[0] == i[0]:
                             editmap(x[0][0],x[0][1],walkable)
-                            tempdeathzones.remove(x)
+                            try:
+                                tempdeathzones.remove(x)
+                            except:
+                                pass
                 deathzones = tempdeathzones.copy()
     if oblivion_choice == "2":
         for key in tutorials:
@@ -950,6 +958,7 @@ while True:
         8:instincts_unbought["8"]["status"],
         9:instincts_unbought["9"]["status"],
         10:instincts_unbought["10"]["status"],
+        13:instincts_unbought["13"]["status"],
         14:instincts_unbought["14"]["status"],
         15:instincts_unbought["15"]["status"],
         16:instincts_unbought["16"]["status"],
