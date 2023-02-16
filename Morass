@@ -11,8 +11,8 @@ presavecode = "" # <---- !!! Enter Save Code Here !!! #
 if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
-    #NOW To-Do NOW :: finish pred boons, Implement boon triggers and effects
-    #Bug Report:: max upgrading skill causes error caught by oblivion, sheep teleport
+    #NOW To-Do NOW :: add ending, add double boons
+    #Bug Report:: beast crash, sheep teleport
     """ map coords
         #ABCD
         1####
@@ -608,13 +608,14 @@ instincts_unbought = {
     "8":{"name":"Cleansing Flames", "level":0, "max level":5, "price":5, "effect":"increases Flamer damage by 10%", "description":"The flames crave inpurity.", "prereq":5, "status":"8"},
     "9":{"name":"Komodo Jaws", "level":0, "max level":4, "price":15, "effect":"Traps stops the predator for longer", "description":"With jaws like a Komodo, they will never let go. ", "prereq":4, "status":"9"},
     "10":{"name":"Gifts of Nothing", "level":0, "max level":3, "price":500, "effect":"Creates pick-ups to replenish ammo", "description":"To run out of supplies is to break universal laws. Balance must be established.", "prereq":1, "status":"10"},
-    "13":{"name":"13 13 13", "level":0, "max level":13, "price":50000, "effect":"Become Insane.", "description":"13 13 13 13 13 13 13 13 13 13 13 13 13", "prereq":0, "status":"13"},
+    "13":{"name":"13 13 13", "level":0, "max level":1, "price":13000000, "effect":"Become Insane.", "description":"13 13 13 13 13 13 13 13 13 13 13 13 13", "prereq":20, "status":"13"},
     "14":{"name":"Cloudfire Ejection System", "level":0, "max level":1, "price":50, "effect":"Allows user to eject a bottle of fuel with [ft]", "description":"The fire wishes for more fuel, more food, and more flesh. ", "prereq":8, "status":"14"},
     "15":{"name":"Quick SetUp", "level":0, "max level":1, "price":75, "effect":"Allows movement after placing a trap in the same turn", "description":"Careful, too many have lost fingers with these bad boys. ", "prereq":9, "status":"15"},
     "16":{"name":"Purified", "level":0, "max level":1, "price":213, "effect":"Makes one Immune to the flame", "description":"Only the purifed could escape unscathed. ", "prereq":14, "status":"16"},
     "17":{"name":"Heavy Caliber", "level":0, "max level":3, "price":25, "effect":"increases damage by 100%", "description":"Larger the beast, larger the bullet. ", "prereq":7, "status":"17"},
     "18":{"name":"Targeting System", "level":0, "max level":1, "price":100, "effect":"Allows you to move after firing. ", "description":"\"Too long in the past makes for attachment. Instead, we must modernize to improve what was always there. This is the mark of the best tool.\" - The Huntsman", "prereq":17, "status":"18"},
     "19":{"name":"Endless Replication", "level":0, "max level":3, "price":250, "effect":"Ammo Regenerates.", "description":"The main limitation of weaponry is those that hold it. ", "prereq":18, "status":"19"},
+    "20":{"name":"Daemon's Curse", "level":0, "max level":2, "price":100000, "effect":"Increases the max amount of boons to be equipped at once.", "description":"The Daemon of Insanity wished to bring others its curse.", "prereq":10, "status":"20"},
 }
 instincts = {
     "0":["Roamer's Revival",1]
@@ -965,11 +966,12 @@ while True:
         17:instincts_unbought["17"]["status"],
         18:instincts_unbought["18"]["status"],
         19:instincts_unbought["19"]["status"],
+        20:instincts_unbought["20"]["status"],
         }
         instinct_tree = {
         1:"     "+str(ns[2])+" - "+str(ns[4])+" - "+str(ns[9])+" - "+str(ns[15])+"               ",
         2:"    /                                ",
-        3:str(ns[0])+"- "+str(ns[1])+" - "+str(ns[10])+" - "+xd+xd+" - "+xd+xd+"  ",
+        3:str(ns[0])+"- "+str(ns[1])+" - "+str(ns[10])+" - "+str(ns[20])+" - "+xd+xd+"  ",
         4:"   \                             ",
         5:"    "+str(ns[3])+" - "+str(ns[5])+" - "+str(ns[8])+" - "+str(ns[14])+" - "+str(ns[16])+"          ",
         6:"      \                           ",
@@ -1003,7 +1005,7 @@ while True:
                     status["mastery points"] -= instincts_unbought[instinct_choice]["price"]
                     instincts_unbought[instinct_choice]["level"] = int(instincts_unbought[instinct_choice]["level"]) + 1
                     if instincts_unbought[instinct_choice]["level"] == instincts_unbought[instinct_choice]["max level"]:
-                        instincts_unbought[instinct_choice]["status"] = xd*len(instincts_unbought[inspot]["status"])
+                        instincts_unbought[instinct_choice]["status"] = xd*len(instincts_unbought[instinct_choice]["status"])
                     instincts[str(instinct_choice)] = [instincts_unbought[instinct_choice]["name"],instincts_unbought[instinct_choice]["level"]]
                 elif buychoice == "y":
                     print("Does not meet prerequisite requirements. ")
@@ -1042,13 +1044,18 @@ while True:
                 print(boons[boon_choice][1])
                 print(boons[boon_choice][4])
                 print("level - "+str(boons[boon_choice][3]))
-                boon_on_choice = input("Turn on, [y/n]")
+                boon_on_choice = input("Turn on, [y] || Turn off, [n]")
                 if boon_on_choice == "y":
+                    boon_limit = int(instincts_unbought["20"]["level"])
                     for x in boons:
-                        if boons[x][2] == True:
+                        if boons[x][2] == True and boon_limit <= 0:
                             boons[x][2] = False
+                        elif boons[x][2] == True and boon_limit > 0:
+                            boon_limit -= 1
                     boons[boon_choice][2] = True
                     print("Boon Activated")
+                elif boon_on_choice == "n":
+                    boons[boon_choice][2] = False
             elif boon_choice != "" and boons[boon_choice][3] == 0:
                 print("")
                 print(boons[boon_choice][4])
