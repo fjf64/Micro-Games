@@ -5,13 +5,12 @@ import time
 presavecode = "" # <---- !!! Enter Save Code Here !!! #
 
 #Welcome to the labyrinth, Roamer! 
-
 #Cheatcode = 
-#st-mp;9998989:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:in-Gifts of Nothing;2:bo-1;3:bo-4;3:bo-3;3;*:bo-2;3:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1675972877.0739472
+#st-mp;999000000008989:in-Roamer's Revival;1:in-weapon knowledge;5:in-Bear Traps;3:in-Sharp Fangs;5:in-Komodo Jaws;4:in-Quick SetUp;1:in-The Flamer;1:in-Compressed Canisters;3:in-Cleansing Flames;2:in-終わり [Owari];1:in-Cloudfire Ejection System;1:in-Frozen Growth;1:in-Heavy Caliber;1:in-Targeting System;1:in-Endless Replication;3:in-Gifts of Nothing;2:bo-1;3:bo-4;3:bo-3;3;*:bo-2;3:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*:ti-1
 if True:
     #Bug Fixing ::  //  //
     #To-Do ::  phase through wall single-use item, random teleport item, random upgrades in the labyrinth, increase higher tier upgrade price, restock, Jailer
-    #NOW To-Do NOW :: add ending, add double boons
+    #NOW To-Do NOW :: hidden shelves
     #Bug Report:: beast crash, sheep teleport
     """ map coords
         #ABCD
@@ -274,9 +273,17 @@ if True:
         if direinput == "?" or direinput == "help":
             hotkeynum = 4
             while hotkeynum <= 12:
-                if hotkeynum == 8:
-                    print("Flamer gotkey - "+settings["8"][2]+ "[" +str(settings["4"][2])+","+str(settings["5"][2])+","+str(settings["6"][2])+","+str(settings["7"][2])+"]")
-                else:
+                if hotkeynum in [4,5,6,7]:
+                    print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
+                elif hotkeynum == 8 and "3" in instincts:
+                    print("Flamer hotkey - "+settings["8"][2]+ "[" +str(settings["4"][2])+","+str(settings["5"][2])+","+str(settings["6"][2])+","+str(settings["7"][2])+"]")
+                elif hotkeynum == 9 and "14" in instincts:
+                    print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
+                elif hotkeynum == 10 and "5" in instincts:
+                    print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
+                elif hotkeynum == 11 and "2" in instincts:
+                    print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
+                elif hotkeynum == 12 and boons["2"][2] == True:
                     print(f"{settings[str(hotkeynum)][0]} - {settings[str(hotkeynum)][2]}")
                 hotkeynum += 1
             print("Bag hotkey - i")
@@ -380,6 +387,7 @@ if True:
                 thecode.append("se-"+str(x)+";"+str(settings[x][2])+";*")
             else:
                 thecode.append("se-"+str(x)+";"+str(settings[x][2]))
+        thecode.append(f"hs-{hidden_shelves}")
         if thecode != "st-mp;0:in-Roamer's Revival;1:se-1;0:se-2;0:se-3;0:se-4;d;*:se-5;a;*:se-6;w;*:se-7;s;*:se-8;f;*:se-9;ft;*:se-10;o;*:se-11;t;*":
             thecode.append("ti-"+str(time.time()))
         thecode = ":".join(thecode)
@@ -389,6 +397,9 @@ if True:
         global mastery_pool
         global status
         global boons
+        global hidden_shelves
+        global hidden_shelves_notification
+        global hs_text
         global time_survived
         global boon_notification
         print(str(time_survived)+" Cycles survived")
@@ -435,6 +446,13 @@ if True:
             boons["2"][3] = 1
             boon_notification = "!"
         mastery_pool = 0
+        #HIDDEN SHELVES
+        """if hidden_shelves < m.floor(mastery_pool / 100):
+            hidden_shelves_notification = "!"
+            hs_text = "|| [8] Hidden Shelves"
+            hidden_shelves = m.floor(mastery_pool / 100)
+            if hidden_shelves > len(hidden_texts):
+                hidden_shelves = len(hidden_texts)"""
     def pred_walk():
         global breakcheck
         global ready_for_path_final
@@ -454,6 +472,7 @@ if True:
         global mastery_pool
         global sheep_distance
         global sheep_sprint
+        global pred_leap_length
         global Sheep_flop
         while ready_for_path_final == False and Predator_loc not in player_traps and pred_frozen <= 0:
             x += 1
@@ -517,7 +536,10 @@ if True:
                                         beestjumpinterval += .1
                                     Predator_loc = [pathfinal[-2][0], pathfinal[-2][1]]
                                 else:
-                                    Predator_loc = [pathfinal[-3][0], pathfinal[-3][1]]
+                                    pred_leap_length = round(pred_leap_length + (.05))
+                                    if pred_leap_length > 10:
+                                        pred_leap_length = 10
+                                    Predator_loc = [pathfinal[pred_leap_length * -1][0], pathfinal[pred_leap_length * -1][1]]
                                     beestjumpswitch = 0
                             except IndexError:
                                 print("The Beest Leaps, Unavoidable")
@@ -577,7 +599,7 @@ tutorials = { #   "" : [""," \n"],
     "2" : ["The Roamer", "A being cursed to eternal damnation in the labyrinth. If you are reading this, it's already too late, your only path now is true death. \n"],
     "3" : ["The Predators", "The Predators hunt those in the labyrinth, relentlessly chasing those in their sights. every journey in the labyrinth may have a different Predator, each with their own abilities and weaknesses, only learnt through clues in the labyrinth. The predators are souls who chose violence and slaughter over Eternal Absence. They treat the labyrinth as a hunting ground rather than a second chance, and are only allowed due to Morrows connection to the God of Pain, Marrow. \n"],
     "4" : ["Morrow's Gifts", "To create hope for improvement, the master of the labyrinth will bestow gifts of strength and power for those in the labyrinth, to have a glimmer of hope that they can beat the Predator. \n"],
-    "5" : ["Roamer's instinct", "Roamers are equipped with instincts of the past, suited to deal with what their future might hold. every death means more mastery of life, allowing the Roamer to gain an edge in the labyrinth. \n"],
+    "5" : ["Roamer's instinct", "Roamers are equipped with instincts of the past, suited to deal with what their future might hold. every death means more mastery of life, allowing the Roamer to gain an edge in the labyrinth through instincts created through mastery. \n"],
     "6" : ["Daemon's Boons", "Daemons, entities with the most control of the labyrinth, often speak with Roamers, giving them a challenge to entertain the Daemons. Doing so will reward a special gift, boons of incomparable power. \n"],
     "7" : ["Morrows's Contributions", "As a first generation god, Morrow had much significance in the world. But different from other gods, Morrow was the god of all that was gone, or didn't exist. Morrow built the labyrinth as a young child to entertain himself in the Rove, the space outside reality. As morrow grew older, the labyrinth became a prison for those he deemed unworthy of Eternal Absence. \n While Morrow was a harsh god, he was also a fair one. Every soul in the labyrinth has a chance to reach Eternal Absence by self improvement.  \n"],
     "8" : ["Morrow, God of Absence","Morrow was born of nothing, from a mother that didn't yet exist. Morrow's mother is a being that exists in limbo between reality and nothing, between life and death. As such, Morrow became absent, only existing in The Rove, a sliver of nothing that surrounds reality. He controls all that is absent from existence. Dreams, Death, the Past, and the Future all are in his domain, the Rove. \n Morrow lacks connection to the mortal realm, as all he touches becomes absent. To compensate, he communicates through his twin born from the same mother, Marrow, God of Pain. \n Morrow is the only being capable of giving Eternal Absence, known as death to mortals and gods alike. Without Eternal Absence, there would be no relief from pain, only suffering.  \n"],
@@ -590,9 +612,9 @@ tutorials = { #   "" : [""," \n"],
     "15" : ["終わり", "A weapon truly made from nature, signifying the end of those in its sights. Grown from cold corpses, this weapon is a true marksman's charm. The 終わり [Owari] is a sniper rifle crafted from ice capable firing traceless bullets through the toughest of objects, and is so mighty even the best hunter in the world praised its strength. "],
     "16" : ["Cloudfire Ejection System","Bottles of boundless clouds to fuel the perpetual feeding of the fire. To harness godly power, one must hold its vessel and give it nourishment. \n"],
     "17" : ["Patience","The Daemon of Patience is the richest Daemon, with power and wealth beyond the stars, only shackled by time as the only mortal Daemon.\n"],
-    "18" : ["Seraphim's Extinction","Apostles of gods, Seraphims had three pairs of wings, each with their own abilities. But without children, they were doomed to disappear. \n"],
+    "18" : ["Seraphim's Extinction","as Apostles of Gods, Seraphims had three pairs of wings, each with their own abilities. But without any children, they were doomed to disappear. \n"],
     "19" : ["The Immortal Ender","Are you blessed if you cannot die? Those who are trapped in an inescapable hell would always wish for a way out. \n"],
-    "20" : ["Ovid the Sheep","Do not turn your back to the Sheep, else it will shed it's fur. Watch, and wait for a chance to abuse it's shyness. \n"],
+    "20" : ["Ovid the Sheep","Do not turn your back to the Sheep, else it will shed it's fur. Watch, and wait for a chance to exploit it's weakness. \n"],
     
 }
    #"ex":{"name":0, "level":0, "max level":0, "price":0, "effect":0, "description":0, "prereq":0, "status":"ex"},
@@ -600,7 +622,7 @@ instincts_unbought = {
     "0":{"name":"Roamer's Revival", "level":1, "max level":1, "price":0, "effect":"The Roamer will never face death", "description":"Learn, for there is no other escape. ", "prereq":0, "status":"0"}, 
     "1":{"name":"weapon knowledge", "level":0, "max level":10, "price":3,"effect":"+10% damage per level", "description":" knowledge over weapons.", "prereq":0, "status":"1"},
     "2":{"name":"Bear Traps", "level":0, "max level":3, "price":15, "effect":"gains one trap per level - [t] use", "description":"One must use wits to outsmart a hunter", "prereq":1, "status":"2"},
-    "3":{"name":"The Flamer", "level":0, "max level":1, "price":50, "effect":"Obtain a dangerous Flamethrower, stunning roamers, and injuring Predators - [f + {w,a,s,d}] use in direction. ex.) [fw] to fire up.", "description": "capable of burning the gods, the flamethrower shall purify all with its flames. ", "prereq":1, "status":"3"},
+    "3":{"name":"The Flamer", "level":0, "max level":1, "price":50, "effect":"Obtain a dangerous Flamethrower, stunning roamers, clearing the cold, and injuring Predators - [f + {w,a,s,d}] use in direction. ex.) [fw] to fire up.", "description": "capable of burning the gods, the flamethrower shall purify all with its flames. ", "prereq":1, "status":"3"},
     "4":{"name":"Sharp Fangs", "level":0, "max level":5, "price":3, "effect":"Increases trap damage", "description":"One must sharpen their fangs to draw blood. ", "prereq":2, "status":"4"},
     "5":{"name":"Compressed Canisters", "level":0, "max level":11, "price":7, "effect":"Increases the Flamer ammo storage", "description":"The Origin of Fire is fuel. Let it burn. ", "prereq":3, "status":"5"},
     "6":{"name":"終わり [Owari]", "level":0, "max level":1, "price":50, "effect":"unlocks the frozen sniper rifle used to freeze enemies in the column and row of the Roamer. [p] - use", "description":"To stop the unkillable, one must use time. ", "prereq":3, "status":"6"},
@@ -608,7 +630,9 @@ instincts_unbought = {
     "8":{"name":"Cleansing Flames", "level":0, "max level":5, "price":5, "effect":"increases Flamer damage by 10%", "description":"The flames crave inpurity.", "prereq":5, "status":"8"},
     "9":{"name":"Komodo Jaws", "level":0, "max level":4, "price":15, "effect":"Traps stops the predator for longer", "description":"With jaws like a Komodo, they will never let go. ", "prereq":4, "status":"9"},
     "10":{"name":"Gifts of Nothing", "level":0, "max level":3, "price":500, "effect":"Creates pick-ups to replenish ammo", "description":"To run out of supplies is to break universal laws. Balance must be established.", "prereq":1, "status":"10"},
-    "13":{"name":"13 13 13", "level":0, "max level":1, "price":13000000, "effect":"Become Insane.", "description":"13 13 13 13 13 13 13 13 13 13 13 13 13", "prereq":20, "status":"13"},
+    "11":{"name":"Release Relentless", "level":0, "max level":1, "price":13000, "effect":"Allows the predator to be stunned for longer", "description":"You are as relentless as your living space.", "prereq":15, "status":"11"},
+    "12":{"name":"Release the Flames", "level":0, "max level":1, "price":13000, "effect":"allows more fire at once", "description":"Do not let the fire die.", "prereq":16, "status":"12"},
+    "13":{"name":"13 13 13", "level":0, "max level":1, "price":13000000, "effect":"Stay in the Labyrinth and Become Insane.", "description":"13 13 13 13 13 13 13 13 13 13 13 13 13", "prereq":20, "status":"13"},
     "14":{"name":"Cloudfire Ejection System", "level":0, "max level":1, "price":50, "effect":"Allows user to eject a bottle of fuel with [ft]", "description":"The fire wishes for more fuel, more food, and more flesh. ", "prereq":8, "status":"14"},
     "15":{"name":"Quick SetUp", "level":0, "max level":1, "price":75, "effect":"Allows movement after placing a trap in the same turn", "description":"Careful, too many have lost fingers with these bad boys. ", "prereq":9, "status":"15"},
     "16":{"name":"Purified", "level":0, "max level":1, "price":213, "effect":"Makes one Immune to the flame", "description":"Only the purifed could escape unscathed. ", "prereq":14, "status":"16"},
@@ -616,7 +640,12 @@ instincts_unbought = {
     "18":{"name":"Targeting System", "level":0, "max level":1, "price":100, "effect":"Allows you to move after firing. ", "description":"\"Too long in the past makes for attachment. Instead, we must modernize to improve what was always there. This is the mark of the best tool.\" - The Huntsman", "prereq":17, "status":"18"},
     "19":{"name":"Endless Replication", "level":0, "max level":3, "price":250, "effect":"Ammo Regenerates.", "description":"The main limitation of weaponry is those that hold it. ", "prereq":18, "status":"19"},
     "20":{"name":"Daemon's Curse", "level":0, "max level":2, "price":100000, "effect":"Increases the max amount of boons to be equipped at once.", "description":"The Daemon of Insanity wished to bring others its curse.", "prereq":10, "status":"20"},
+    "100":{"name":"Become Mortal", "level":0, "max level":1, "price":5000000, "effect":"Finish the Game and Escape the Labyrinth.", "description":"To be both Mortal and a Roamer is to become something more. ", "prereq":20, "status":"100"},
 }
+hidden_texts = {
+    "0":["Hunter and Prey","WIP"]
+}
+
 instincts = {
     "0":["Roamer's Revival",1]
 }
@@ -628,7 +657,7 @@ boons = { #"ex":[0"name", 1"description", 2on state, 3unlocked state, 4"1 : \n2 
 }
 boon_notification = ""
 pred_variations = ["Reaper", "Beest", "Huntsman", "Sheep"]
-#pred_variations = ["Sheep"] # for testing
+#pred_variations = ["Beest"] # for testing
 status = {
     "mastery points":0,
 }
@@ -647,10 +676,12 @@ settings = { # "num":["name","desc",value]
     "12":["Stiletto hotkey","Enter hotkey for placing using the Reaper's Stiletto.","r","*"],
 }
 player_traps = []
+hidden_shelves = 0
 tanks = [] #[[0x,0y,]]
 active_moving_projectiles = [] # [[posx,posy],[oldposx,oldposy],direction_travelling,name]]
 deathzones = [] #[[0x,1y,2oldx, 4time]]
 beestjumpswitch = 0
+hs_text = ""
 breakcheck = False
 """
 |\_____)\______
@@ -661,7 +692,7 @@ breakcheck = False
 while True:
     print("Current Save Code:")
     savingcode()
-    print(f"welcome to the Oblivion. [1] Enter the labyrinth || [2] The Library || [3] Roamer's Instincts || {boon_notification} [4] Boons {boon_notification} || [5] Status || [6] Settings || [7] Load Save")
+    print(f"\nWelcome to the Oblivion. [1] Enter the labyrinth || [2] The Library || [3] Roamer's Instincts || {boon_notification}{boon_notification} [4] Boons {boon_notification}{boon_notification} || [5] Status || [6] Settings || [7] Load Save {hs_text}")
     if presavecode == "":
         oblivion_choice = input()
     else:
@@ -718,6 +749,7 @@ while True:
         player_on_fire = 0
         owariregen = 0
         flame_count = 0
+        pred_leap_length = 3
         Frozen_time = 0
         tanks = []
         wings_length = int(boons["4"][3]) * 2
@@ -869,9 +901,12 @@ while True:
                 if active_moving_projectiles[x] == "Removed":
                     fake_active_moving_projectiles.remove(active_moving_projectiles[x])
             active_moving_projectiles = c.deepcopy(fake_active_moving_projectiles)
+            if pred_frozen > 10 and not "11" in instincts:
+                pred_frozen = 10
             if active_fire:
                 active_fire.remove(active_fire[0])
-                
+                while len(active_fire) > 25 and not "12" in instincts:
+                    active_fire.remove(active_fire[0])
             if "10" in instincts: #GIFTS OF NOTHING
                 for x in range(int(instincts_unbought["10"]["level"]) - len(gon)):
                     gon.append(r.choice(walker_pos_list))
@@ -883,7 +918,7 @@ while True:
                     inv["Fire Bottles"] += 1
                 if "3" in instincts and inv["Flamer Gas"] + 3 <= 5*(int(instincts_unbought["5"]["level"]) + 1):
                     inv["Flamer Gas"] += 3
-                gon.remove(oldpp)
+                gon.remove(oldpp) 
             if pred_type == "Reaper":
                 deathzonecountercheck = False
                 for x in range(len(deathzones)):
@@ -947,7 +982,10 @@ while True:
         except:
             print("No such book index exists.")
     if oblivion_choice == "3":
-        ns = {
+        ns = {}
+        for x in instincts_unbought:
+            ns[int(x)] = instincts_unbought[x]["status"]
+        """ns = {
         0:instincts_unbought["0"]["status"],
         1:instincts_unbought["1"]["status"],
         2:instincts_unbought["2"]["status"],
@@ -959,6 +997,8 @@ while True:
         8:instincts_unbought["8"]["status"],
         9:instincts_unbought["9"]["status"],
         10:instincts_unbought["10"]["status"],
+        11:instincts_unbought["11"]["status"],
+        12:instincts_unbought["12"]["status"],
         13:instincts_unbought["13"]["status"],
         14:instincts_unbought["14"]["status"],
         15:instincts_unbought["15"]["status"],
@@ -967,23 +1007,24 @@ while True:
         18:instincts_unbought["18"]["status"],
         19:instincts_unbought["19"]["status"],
         20:instincts_unbought["20"]["status"],
-        }
+        100:instincts_unbought["100"]["status"],
+        }"""
         instinct_tree = {
-        1:"     "+str(ns[2])+" - "+str(ns[4])+" - "+str(ns[9])+" - "+str(ns[15])+"               ",
+        1:"     "+str(ns[2])+" - "+str(ns[4])+" - "+str(ns[9])+" - "+str(ns[15])+" - "+str(ns[11])+"               ",
         2:"    /                                ",
-        3:str(ns[0])+"- "+str(ns[1])+" - "+str(ns[10])+" - "+str(ns[20])+" - "+xd+xd+"  ",
+        3:str(ns[0])+" - "+str(ns[1])+" - "+str(ns[10])+" - "+str(ns[20])+" - "+str(ns[100])+"  ",
         4:"   \                             ",
-        5:"    "+str(ns[3])+" - "+str(ns[5])+" - "+str(ns[8])+" - "+str(ns[14])+" - "+str(ns[16])+"          ",
+        5:"    "+str(ns[3])+" - "+str(ns[5])+" - "+str(ns[8])+" - "+str(ns[14])+" - "+str(ns[16])+" -  "+str(ns[12])+"          ",
         6:"      \                           ",
         7:"        "+str(ns[6])+" - "+str(ns[7])+" - "+str(ns[17])+" - "+str(ns[18])+" - "+str(ns[19])+"      ",
         }
         
         """Real instinct_tree = {
-        1:"     2 - 4 - 9 - 15                ",
+        1:"     2 - 4 - 9 - 15 - 11                ",
         2:"    /                                 ",
-        3:"0- 1 - 10 - 11 - 12  ",
+        3:"0- 1 - 10 - 20 - 100 ",
         4:"   \                             ",
-        5:"    3 - 5 - 8 - 14 - 16          ",
+        5:"    3 - 5 - 8 - 14 - 16 - 12          ",
         6:"      \                           ",
         7:"        6 - 7 -17 - 18 - 19        ",
         }"""
@@ -1007,6 +1048,20 @@ while True:
                     if instincts_unbought[instinct_choice]["level"] == instincts_unbought[instinct_choice]["max level"]:
                         instincts_unbought[instinct_choice]["status"] = xd*len(instincts_unbought[instinct_choice]["status"])
                     instincts[str(instinct_choice)] = [instincts_unbought[instinct_choice]["name"],instincts_unbought[instinct_choice]["level"]]
+                    if instinct_choice == "100":
+                        print("\nRoamers only have one way out of the Labyrinth, and that is to become mortal, then to accept their fate. to pass away in the Labyrinth is to die in the Rove, and to die in the Rove is to live once again. We all must overcome our challenges, or we will become the challenge . \n")
+                        time.sleep(20)
+                        print("\nCongrats and Thank You for Playing my Game!\n")
+                        time.sleep(10)
+                        savingcode()
+                        break
+                    if instinct_choice == "13":
+                        print("\nAll Roamers have a choice to stay, but are you strong enough to not become twisted like those before and hunt your brethren?\n")
+                        time.sleep(20)
+                        print("\nCongrats and Thank You for Playing my Game, and Congrats for Finding the Hidden Ending!\n")
+                        time.sleep(10)
+                        savingcode()
+                        break
                 elif buychoice == "y":
                     print("Does not meet prerequisite requirements. ")
             elif buychoice == "y" and int(status["mastery points"]) >= int(instincts_unbought[instinct_choice]["price"]):
@@ -1130,12 +1185,28 @@ while True:
                 if "ti-" in x:
                     settingtemp = x.split("-")
                     all_gone = round(time.time() - float(settingtemp[1]))
-                    hours_gone = m.floor(all_gone / 3600)
+                    all_gone = round(time.time() - float(settingtemp[1]))
+                    days_gone = m.floor(all_gone / 86400)
+                    hours_gone = m.floor((all_gone % days_gone) / 3600)
                     minutes_gone = m.floor((all_gone % 3600)/ 60)
                     seconds_gone = ((all_gone - hours_gone) - minutes_gone) % 60
-                    print(f"Welcome back Roamer! You have been gone {hours_gone} hours, {minutes_gone} minutes, and {seconds_gone} seconds.")
+                    print(f"\nWelcome back Roamer! You have been gone {days_gone} days, {hours_gone} hours, {minutes_gone} minutes, and {seconds_gone} seconds.\n")
                     time.sleep(1)
+                if "hs" in x:
+                    settingtemp = x.split("-")
+                    hidden_shelves = int(settingtemp[1])
         except Exception as exc: #SWITCH TO EXCEPT WHEN DONE
             print(exc)
             print("Bad Savecode: Fix it or contact Dev")
         presavecode = ""
+    if oblivion_choice == "8" and hidden_shelves < 0:
+        for key in hidden_texts:
+            if int(key) <= hidden_shelves:
+                print(str(key) +" - "+ hidden_texts[key][0])
+        tutorials_choice = input("Enter Book Index:")
+        try:
+            if int(hidden_texts) <= hidden_shelves:
+                print(hidden_texts[tutorials_choice][1])
+        except:
+            print("No such book index exists.")
+    
